@@ -47,11 +47,28 @@ export default function AdminUsers() {
     },
   });
 
+  const { data: trustedContacts = [] } = useQuery({
+    queryKey: ["/api/admin/trusted-contacts"],
+    queryFn: async () => {
+      const response = await fetch("/api/admin/trusted-contacts", {
+        credentials: "include"
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch trusted contacts");
+      }
+      const data = await response.json();
+      return data.contacts || [];
+    },
+  });
+
   // Combine user and vault data for display (without sensitive content)
   const userVaultData = users.map((user: any) => {
     const userVault = vaults.find((vault: any) => vault.userId === user.id);
     const userReleaseRequests = Array.isArray(releaseRequests) ? releaseRequests.filter((req: any) => 
       userVault && req.vaultId === userVault.id
+    ) : [];
+    const userTrustedContacts = Array.isArray(trustedContacts) ? trustedContacts.filter((contact: any) => 
+      contact.vaultOwnerId === user.id
     ) : [];
     
     return {
@@ -63,6 +80,9 @@ export default function AdminUsers() {
       vaultUpdatedAt: userVault?.updatedAt,
       pendingReleaseRequests: userReleaseRequests.filter((req: any) => req.status === 'pending').length,
       approvedReleaseRequests: userReleaseRequests.filter((req: any) => req.status === 'approved').length,
+      trustedContactsCount: userTrustedContacts.length,
+      activeTrustedContacts: userTrustedContacts.filter((contact: any) => contact.status === 'accepted').length,
+      pendingTrustedContacts: userTrustedContacts.filter((contact: any) => contact.status === 'pending').length,
     };
   });
 
@@ -70,6 +90,7 @@ export default function AdminUsers() {
   const usersWithVaults = userVaultData.filter((u: any) => u.vaultExists).length;
   const completedVaults = userVaultData.filter((u: any) => u.vaultComplete).length;
   const pendingRequests = Array.isArray(releaseRequests) ? releaseRequests.filter((req: any) => req.status === 'pending').length : 0;
+  const usersWithTrustedContacts = userVaultData.filter((u: any) => u.trustedContactsCount > 0).length;
 
   return (
     <AdminLayout>
@@ -81,7 +102,7 @@ export default function AdminUsers() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -122,6 +143,18 @@ export default function AdminUsers() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
+                    <p className="text-sm font-medium text-gray-600">Users with Trusted Contacts</p>
+                    <p className="text-2xl font-bold text-gray-900">{usersWithTrustedContacts}</p>
+                  </div>
+                  <Users className="h-8 w-8 text-purple-600" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
                     <p className="text-sm font-medium text-gray-600">Pending Requests</p>
                     <p className="text-2xl font-bold text-gray-900">{pendingRequests}</p>
                   </div>
@@ -152,6 +185,7 @@ export default function AdminUsers() {
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Role</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Vault Status</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Completion</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600">Trusted Contacts</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Release Requests</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Last Updated</th>
                       </tr>
@@ -195,6 +229,26 @@ export default function AdminUsers() {
                             ) : (
                               <span className="text-gray-400">-</span>
                             )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex space-x-2">
+                              {user.trustedContactsCount > 0 ? (
+                                <>
+                                  {user.activeTrustedContacts > 0 && (
+                                    <Badge variant="default">
+                                      {user.activeTrustedContacts} Active
+                                    </Badge>
+                                  )}
+                                  {user.pendingTrustedContacts > 0 && (
+                                    <Badge variant="secondary">
+                                      {user.pendingTrustedContacts} Pending
+                                    </Badge>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="text-gray-400">None</span>
+                              )}
+                            </div>
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex space-x-2">

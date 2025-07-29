@@ -324,6 +324,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin routes - get all trusted contacts for overview
+  app.get('/api/admin/trusted-contacts', requireAdmin, async (req, res) => {
+    try {
+      const contacts = await storage.getAllTrustedContacts();
+      res.json({ contacts });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch trusted contacts', error });
+    }
+  });
+
   // Chat support endpoint
   app.post('/api/chat', async (req, res) => {
     try {
