@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Heart, BarChart3, Users, Building2, LogOut } from "lucide-react";
 
@@ -9,8 +10,9 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [location] = useLocation();
+  const queryClient = useQueryClient();
 
   const navigation = [
     {
@@ -33,8 +35,24 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
   ];
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      // Clear the query cache first
+      queryClient.clear();
+      
+      await fetch("/api/logout", { 
+        method: "POST",
+        credentials: "include"
+      });
+      
+      // Force a full page redirect to home
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if logout fails, clear cache and redirect
+      queryClient.clear();
+      window.location.href = "/";
+    }
   };
 
   return (
