@@ -1,0 +1,59 @@
+ Replit Prompt: Build a Secure Legacy Vault Web App – “Wishkeepers”
+You are an expert full-stack developer. Build a secure, encrypted, user-friendly web application called Wishkeepers, a digital 'green box' for storing sensitive legacy-related data. The app helps individuals prepare important information to be accessed upon their death, including funeral wishes, bank accounts, life insurance policies, and personal messages. All data must be stored securely with end-to-end encryption and only released upon validated request by nominated trusted contacts.
+🌐 Tech Stack Preferences
+Frontend: React (with Tailwind or other minimal, warm UI library)
+Backend: Node.js with Express
+Database: MongoDB (with encrypted fields)
+Authentication: Firebase Auth or similar (support 2FA)
+Encryption: AES-256 or similar, encrypted at field level
+Deployment: Cloud-hosted (e.g. Replit deployment or integration-ready with Vercel/Render)
+👤 User Types
+Primary User (Vault Owner):
+Registers account with 2FA
+Creates their “Vault” by entering structured sensitive information
+Nominates 1–2 “Trusted Contacts” via email invitation
+Trusted Contact (Wishkeeper):
+Receives email invite and registers account
+Can either create their own Vault or simply act as a Wishkeeper for others
+Can request data release by completing an online declaration of death
+🔐 Security & Access Control
+Enforce end-to-end encryption for all stored data fields (bank, funeral, insurance info, etc.)
+Vault content is not visible to anyone except the owner unless a release request is triggered
+Access control to release data:
+Trusted Contact fills in a “declaration of death” form
+Admin manually validates request (for MVP)
+Upon validation, data becomes viewable/downloadable to wishkeeper(s)
+📂 Vault Content Structure
+Create frontend and backend models to allow users to input and view the following fields (all encrypted):
+Funeral Wishes (burial/cremation, location, readings, music, etc.)
+Life Insurance (policy provider name, number)
+Banking (bank name only, no login credentials)
+Special Requests (e.g., “gift my guitar to my niece”)
+Personal Messages (to specific individuals)
+Reminders (auto-nag for 6-month inactivity if incomplete, and 12-month update check-in)
+📧 Email & Notification Logic
+Email invitations to Trusted Contacts
+Confirmation emails on setup
+Friendly reminder emails after 6 months (if vault incomplete) and annually to check/update info
+🧠 Admin & Business Model Considerations
+Build admin dashboard (even basic) to:
+View user activity
+View and approve trusted contact data release requests
+Business logic: capture if user lacks life insurance or funeral instructions
+Flag these for future marketing opportunities
+Include user consent in Terms & Conditions for potential data sharing with trusted providers
+💰 Commercial Functionality (MVP-ready, future activated)
+Freemium structure:
+Free tier allows full use but with limited storage/customisation
+Premium tier (to be activated later): unlock themes, message scheduling, etc.
+Advertising capability:
+Flag incomplete data (e.g. “No life insurance policy”) and display placeholder “Partner coming soon” cards
+Design ad space slots to be easily populated via admin
+🧪 Miscellaneous
+Implement audit logging for vault access and release attempts
+Allow custom field addition (e.g., “My crypto wallet location”)
+Build modularly so new categories can be added easily
+🎨 Tone & UX Guidelines
+Tone: calm, supportive, legacy-minded
+UX: warm, non-corporate, clean
+Suggest placeholder content for prompts (e.g., “Have you left funeral instructions?”, “Do you have a life insurance policy?”)
