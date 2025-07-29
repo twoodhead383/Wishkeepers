@@ -15,8 +15,14 @@ export function useAuth() {
       const response = await apiRequest("POST", "/api/login", data);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/me"] });
+      // Redirect based on user role
+      if (data.user?.isAdmin) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/dashboard";
+      }
     },
   });
 
