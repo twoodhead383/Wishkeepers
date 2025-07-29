@@ -14,6 +14,7 @@ import Vault from "@/pages/vault";
 import TrustedContacts from "@/pages/trusted-contacts";
 import Admin from "@/pages/admin";
 import ThirdParties from "@/pages/admin/third-parties";
+import AdminUsers from "@/pages/admin/users";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/trusted-contacts" component={TrustedContacts} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/third-parties" component={ThirdParties} />
+      <Route path="/admin/users" component={AdminUsers} />
       <Route path="/redirect" component={AdminRedirect} />
       <Route component={NotFound} />
     </Switch>
