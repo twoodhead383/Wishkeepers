@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, Menu, X, Shield, HelpCircle, CheckCircle, Lock, Eye, UserCheck, Phone, Mail, MessageCircle, FileText, Users, Clock, Gift } from "lucide-react";
 import { useState } from "react";
+import { ChatWidget } from "@/components/chat-widget";
 
 export function Navigation() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -294,9 +295,7 @@ export function Navigation() {
                           </div>
                           <h3 className="font-semibold mb-2">Live Chat</h3>
                           <p className="text-sm text-gray-600 mb-3">Quick answers to common questions.</p>
-                          <Button className="bg-purple-600 text-white text-sm px-4 py-2">
-                            Start Chat
-                          </Button>
+                          <ChatWidget />
                         </div>
                       </div>
 

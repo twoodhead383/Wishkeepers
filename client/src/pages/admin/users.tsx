@@ -50,9 +50,9 @@ export default function AdminUsers() {
   // Combine user and vault data for display (without sensitive content)
   const userVaultData = users.map((user: any) => {
     const userVault = vaults.find((vault: any) => vault.userId === user.id);
-    const userReleaseRequests = releaseRequests.filter((req: any) => 
+    const userReleaseRequests = Array.isArray(releaseRequests) ? releaseRequests.filter((req: any) => 
       userVault && req.vaultId === userVault.id
-    );
+    ) : [];
     
     return {
       ...user,
@@ -67,9 +67,9 @@ export default function AdminUsers() {
   });
 
   const totalUsers = users.length;
-  const usersWithVaults = userVaultData.filter(u => u.vaultExists).length;
-  const completedVaults = userVaultData.filter(u => u.vaultComplete).length;
-  const pendingRequests = releaseRequests.filter((req: any) => req.status === 'pending').length;
+  const usersWithVaults = userVaultData.filter((u: any) => u.vaultExists).length;
+  const completedVaults = userVaultData.filter((u: any) => u.vaultComplete).length;
+  const pendingRequests = Array.isArray(releaseRequests) ? releaseRequests.filter((req: any) => req.status === 'pending').length : 0;
 
   return (
     <AdminLayout>

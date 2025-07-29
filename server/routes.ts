@@ -4,6 +4,7 @@ import session from "express-session";
 import { storage } from "./storage";
 import { hashPassword, comparePassword, requireAuth, requireAdmin } from "./auth";
 import { sendTrustedContactInvite } from "./email";
+import { handleChatWithAI } from "./chat";
 import { 
   insertUserSchema, 
   loginSchema, 
@@ -320,6 +321,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: 'Third party deleted successfully' });
     } catch (error) {
       res.status(500).json({ message: 'Failed to delete third party', error });
+    }
+  });
+
+  // Chat support endpoint
+  app.post('/api/chat', async (req, res) => {
+    try {
+      const { message, conversationHistory } = req.body;
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: 'Message is required' });
+      }
+
+      const response = await handleChatWithAI({
+        message,
+        conversationHistory: conversationHistory || []
+      });
+
+      res.json({ response });
+    } catch (error) {
+      console.error('Chat error:', error);
+      res.status(500).json({ 
+        error: 'I apologize, but I\'m having trouble right now. Please contact our support team at support@wishkeepers.com for assistance.' 
+      });
     }
   });
 
