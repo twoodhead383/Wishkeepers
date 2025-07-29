@@ -69,6 +69,11 @@ export function Navigation() {
                 </Link>
                 <span className="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer">Security</span>
                 <span className="text-gray-600 hover:text-blue-600 transition-colors cursor-pointer">Support</span>
+                <Link href="/register">
+                  <Button variant="outline" className="mr-2">
+                    Register
+                  </Button>
+                </Link>
                 <Link href="/login">
                   <Button className="bg-blue-600 text-white hover:bg-blue-700">
                     Sign In

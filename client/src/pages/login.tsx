@@ -43,7 +43,7 @@ export default function Login() {
   };
 
   return (
-    <Layout showNavigation={false}>
+    <Layout>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
