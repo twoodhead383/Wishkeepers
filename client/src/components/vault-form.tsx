@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { insertVaultSchema, type InsertVault } from "@shared/schema";
+import { insertVaultSchema, type InsertVault, type FuneralData } from "@shared/schema";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Church, Music, Gift, Heart, Umbrella, Building } from "lucide-react";
+import { FuneralWizard } from "@/components/funeral-wizard";
+import { Church, Music, Gift, Heart, Umbrella, Building, Wand2 } from "lucide-react";
 
 interface VaultFormProps {
   initialData?: Partial<InsertVault>;
@@ -22,15 +23,17 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [activeSection, setActiveSection] = useState("funeral");
+  const [showFuneralWizard, setShowFuneralWizard] = useState(false);
 
   const form = useForm<InsertVault>({
     resolver: zodResolver(insertVaultSchema),
     defaultValues: {
-      funeralWishes: initialData?.funeralWishes || "",
-      lifeInsurance: initialData?.lifeInsurance || "",
-      banking: initialData?.banking || "",
-      personalMessages: initialData?.personalMessages || "",
-      specialRequests: initialData?.specialRequests || "",
+      funeralWishes: initialData?.funeralWishes || null,
+      funeralData: initialData?.funeralData || undefined,
+      lifeInsurance: initialData?.lifeInsurance || null,
+      banking: initialData?.banking || null,
+      personalMessages: initialData?.personalMessages || null,
+      specialRequests: initialData?.specialRequests || null,
     },
   });
 
@@ -57,6 +60,13 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
     saveMutation.mutate(data);
   };
 
+  const handleFuneralWizardSave = (funeralData: FuneralData) => {
+    form.setValue('funeralData', funeralData);
+    const currentData = form.getValues();
+    saveMutation.mutate(currentData);
+    setShowFuneralWizard(false);
+  };
+
   const sections = [
     { id: "funeral", title: "Funeral Wishes", icon: Church, color: "text-green-600" },
     { id: "insurance", title: "Life Insurance", icon: Umbrella, color: "text-blue-600" },
@@ -64,6 +74,16 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
     { id: "messages", title: "Personal Messages", icon: Heart, color: "text-purple-600" },
     { id: "requests", title: "Special Requests", icon: Gift, color: "text-indigo-600" },
   ];
+
+  if (showFuneralWizard) {
+    return (
+      <FuneralWizard
+        initialData={form.getValues('funeralData')}
+        onSave={handleFuneralWizardSave}
+        onCancel={() => setShowFuneralWizard(false)}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -95,7 +115,7 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {activeSection === "funeral" && (
+          {activeSection === "funeral" && !showFuneralWizard && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -104,23 +124,74 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="funeralWishes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your Funeral Preferences</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Please describe your preferences for your funeral service, burial or cremation, location, music, readings, and any other specific wishes..."
-                          className="min-h-[200px] resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* New AI-Assisted Option */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <Wand2 className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-semibold text-blue-900 mb-2">
+                        AI-Guided Funeral Planning
+                      </h4>
+                      <p className="text-blue-700 mb-4">
+                        Let our caring wizard guide you through planning your funeral step-by-step. 
+                        We'll ask thoughtful questions based on your beliefs and provide helpful suggestions.
+                      </p>
+                      <Button 
+                        type="button"
+                        onClick={() => setShowFuneralWizard(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Wand2 className="h-4 w-4 mr-2" />
+                        Start Guided Planning
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Existing Data Summary */}
+                {form.getValues('funeralData') && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h5 className="font-semibold text-green-800 mb-2">Your Current Funeral Plan</h5>
+                    <p className="text-green-700 text-sm mb-3">
+                      You've completed the guided funeral planning. You can edit your plan anytime.
+                    </p>
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowFuneralWizard(true)}
+                      className="border-green-300 text-green-700 hover:bg-green-100"
+                    >
+                      Edit Your Plan
+                    </Button>
+                  </div>
+                )}
+
+                {/* Traditional Text Area (fallback) */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <FormLabel>Traditional Text Entry</FormLabel>
+                    <span className="text-xs text-gray-500">For those who prefer writing freely</span>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="funeralWishes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Alternatively, you can describe your preferences here in your own words..."
+                            className="min-h-[150px] resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
                 <div className="text-sm text-gray-500">
                   <p>Consider including:</p>
                   <ul className="list-disc list-inside mt-2 space-y-1">

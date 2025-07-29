@@ -1,0 +1,83 @@
+🔧 Prompt: Build an AI-Guided, Contextual ‘Funeral Wishes’ Wizard for Wishkeepers
+You are an expert full-stack developer and UX designer. Help me redesign the “Funeral Wishes” section of my secure legacy vault web app (Wishkeepers) into an AI-assisted guided flow, replacing the current single text input with a dynamic, conditional-question wizard. The goal is to support users emotionally and practically as they record their final wishes, while tailoring the experience to their beliefs and values.
+
+🎯 Primary Goals
+Make the process more supportive and intuitive
+
+Replace the current text box with a step-by-step guided form
+
+Dynamically adjust the flow based on user answers (e.g., religious preferences)
+
+Pre-fill smart suggestions using lightweight AI/local prompts (LLM calls optional, not required for MVP)
+
+🧭 Guided Flow Logic
+Initial Question:
+
+“Do you consider yourself religious, spiritual, or neither?”
+
+Option A: Religious → Ask for denomination (e.g., Christian, Muslim, Hindu, Jewish, Sikh, etc.)
+
+Option B: Spiritual → Ask if they'd like a spiritual element included (readings, music, nature themes)
+
+Option C: Neither → Skip religious questions and offer secular formats
+
+Branching Based on Response:
+
+For Religious Users:
+
+Preferred faith leader / celebrant
+
+Preferred location of service (e.g. church, mosque, crematorium, etc.)
+
+Any specific readings, rites, traditions (with smart examples)
+
+Dress code preferences (e.g. traditional, white clothing, head covering, etc.)
+
+For Spiritual or Non-Religious Users:
+
+Nature or theme-based preferences (e.g. outdoor, eco-burial, music-driven)
+
+Poems, quotes or songs they'd like
+
+Whether they’d like a celebration of life, or formal service
+
+Common Elements for All:
+
+Burial vs. cremation vs. other (e.g., eco-burial, ashes scattered)
+
+Preferred location for remains
+
+Type of service: formal, informal, private, public
+
+Attendees to include or exclude
+
+Tone: somber, celebratory, humour welcomed?
+
+Any specific people to speak or be involved
+
+Visuals: music, photos, slide shows
+
+Notes for family (e.g. “don’t spend a lot”, “keep it simple”)
+
+🤖 AI Support Features
+Provide real-time suggestions based on previous user inputs (e.g. if Christian → offer Bible readings)
+
+Use inline prompts like:
+
+“Many people who identify as [faith] include a [type of ritual] — would you like to include one?”
+
+Show supportive microcopy throughout (e.g. “This can feel hard to think about. Just share what you can.”)
+
+💾 Backend Requirements
+Save each step in a JSON schema per user to allow future editing
+
+Encrypt stored data using existing vault encryption model
+
+Allow exporting a summary PDF version of the funeral plan (MVP optional)
+
+💡 Nice-to-Have (Post-MVP / optional)
+Use OpenAI (or other LLM) to generate a “funeral summary draft” from user inputs
+
+Allow user to edit the draft directly
+
+Suggest missing fields with kind nudges: “You’ve not chosen music – would you like us to suggest a few ideas?”

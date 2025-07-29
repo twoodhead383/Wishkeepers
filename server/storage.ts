@@ -121,6 +121,7 @@ export class DatabaseStorage implements IStorage {
     return {
       ...vault,
       funeralWishes: vault.funeralWishes ? decryptField(vault.funeralWishes) : null,
+      funeralData: vault.funeralData ? JSON.parse(vault.funeralData as string) : null,
       lifeInsurance: vault.lifeInsurance ? decryptField(vault.lifeInsurance) : null,
       banking: vault.banking ? decryptField(vault.banking) : null,
       personalMessages: vault.personalMessages ? decryptField(vault.personalMessages) : null,
@@ -140,6 +141,7 @@ export class DatabaseStorage implements IStorage {
     const encryptedData = {
       ...vaultData,
       funeralWishes: vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : null,
+      funeralData: vaultData.funeralData ? JSON.stringify(vaultData.funeralData) : null,
       lifeInsurance: vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : null,
       banking: vaultData.banking ? encryptField(vaultData.banking) : null,
       personalMessages: vaultData.personalMessages ? encryptField(vaultData.personalMessages) : null,
@@ -166,6 +168,9 @@ export class DatabaseStorage implements IStorage {
       funeralWishes: vaultData.funeralWishes !== undefined ? 
         (vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : null) : 
         existing.funeralWishes,
+      funeralData: vaultData.funeralData !== undefined ? 
+        (vaultData.funeralData ? JSON.stringify(vaultData.funeralData) : null) : 
+        existing.funeralData,
       lifeInsurance: vaultData.lifeInsurance !== undefined ? 
         (vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : null) : 
         existing.lifeInsurance,
@@ -191,8 +196,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   private calculateCompletionPercentage(vault: Partial<InsertVault | Vault>): number {
-    const fields = ['funeralWishes', 'lifeInsurance', 'banking', 'personalMessages', 'specialRequests'];
-    const completed = fields.filter(field => vault[field as keyof typeof vault]).length;
+    const fields = ['funeralWishes', 'funeralData', 'lifeInsurance', 'banking', 'personalMessages', 'specialRequests'];
+    const completed = fields.filter(field => {
+      const value = vault[field as keyof typeof vault];
+      return value && (typeof value === 'string' ? value.trim() : true);
+    }).length;
     return Math.round((completed / fields.length) * 100);
   }
 

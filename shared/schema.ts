@@ -18,7 +18,8 @@ export const users = pgTable("users", {
 export const vaults = pgTable("vaults", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id),
-  funeralWishes: text("funeral_wishes"), // encrypted
+  funeralWishes: text("funeral_wishes"), // encrypted - legacy text field for backward compatibility
+  funeralData: jsonb("funeral_data"), // encrypted - new structured funeral data
   lifeInsurance: text("life_insurance"), // encrypted
   banking: text("banking"), // encrypted
   personalMessages: text("personal_messages"), // encrypted
@@ -61,6 +62,37 @@ export const insertUserSchema = createInsertSchema(users).omit({
   isAdmin: true,
 });
 
+// Funeral data schema
+export const funeralDataSchema = z.object({
+  religiousOrientation: z.enum(['religious', 'spiritual', 'neither']).optional(),
+  denomination: z.string().optional(),
+  spiritualElements: z.boolean().optional(),
+  faithLeader: z.string().optional(),
+  serviceLocation: z.string().optional(),
+  readings: z.array(z.string()).default([]),
+  traditions: z.array(z.string()).default([]),
+  dressCode: z.string().optional(),
+  naturePreferences: z.string().optional(),
+  poems: z.array(z.string()).default([]),
+  music: z.array(z.string()).default([]),
+  serviceType: z.enum(['formal', 'informal', 'celebration_of_life', 'private', 'public']).optional(),
+  disposalMethod: z.enum(['burial', 'cremation', 'eco_burial', 'other']).optional(),
+  disposalDetails: z.string().optional(),
+  remainsLocation: z.string().optional(),
+  attendees: z.object({
+    include: z.array(z.string()).default([]),
+    exclude: z.array(z.string()).default([]),
+  }).optional(),
+  tone: z.enum(['somber', 'celebratory', 'humour_welcomed', 'mixed']).optional(),
+  speakers: z.array(z.string()).default([]),
+  visuals: z.object({
+    photos: z.boolean().default(false),
+    slideshow: z.boolean().default(false),
+    videos: z.boolean().default(false),
+  }).optional(),
+  familyNotes: z.string().optional(),
+});
+
 export const insertVaultSchema = createInsertSchema(vaults).omit({
   id: true,
   userId: true,
@@ -68,6 +100,13 @@ export const insertVaultSchema = createInsertSchema(vaults).omit({
   updatedAt: true,
   isComplete: true,
   completionPercentage: true,
+}).extend({
+  funeralWishes: z.string().nullable().optional(),
+  funeralData: funeralDataSchema.optional(),
+  lifeInsurance: z.string().nullable().optional(),
+  banking: z.string().nullable().optional(),
+  personalMessages: z.string().nullable().optional(),
+  specialRequests: z.string().nullable().optional(),
 });
 
 export const insertTrustedContactSchema = createInsertSchema(trustedContacts).omit({
@@ -98,6 +137,7 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Vault = typeof vaults.$inferSelect;
 export type InsertVault = z.infer<typeof insertVaultSchema>;
+export type FuneralData = z.infer<typeof funeralDataSchema>;
 export type TrustedContact = typeof trustedContacts.$inferSelect;
 export type InsertTrustedContact = z.infer<typeof insertTrustedContactSchema>;
 export type DataReleaseRequest = typeof dataReleaseRequests.$inferSelect;
