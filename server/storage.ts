@@ -6,10 +6,17 @@ import {
   type TrustedContact,
   type InsertTrustedContact,
   type DataReleaseRequest,
-  type InsertDataReleaseRequest
+  type InsertDataReleaseRequest,
+  users,
+  vaults,
+  trustedContacts,
+  dataReleaseRequests
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { encryptField, decryptField } from "./encryption";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
+import { hashPassword } from "./auth";
 
 export interface IStorage {
   // Users
@@ -46,76 +53,68 @@ export interface IStorage {
   }>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-  private vaults: Map<string, Vault>;
-  private trustedContacts: Map<string, TrustedContact>;
-  private dataReleaseRequests: Map<string, DataReleaseRequest>;
-
+export class DatabaseStorage implements IStorage {
   constructor() {
-    this.users = new Map();
-    this.vaults = new Map();
-    this.trustedContacts = new Map();
-    this.dataReleaseRequests = new Map();
-    
-    // Create admin user
-    this.createAdminUser();
+    // Initialize with default users
+    this.createDefaultUsers();
   }
 
-  private async createAdminUser() {
-    const { hashPassword } = await import('./auth');
-    
-    // Create admin user
-    const adminId = randomUUID();
-    const adminPassword = await hashPassword('admin123');
-    const admin: User = {
-      id: adminId,
-      email: 'admin@wishkeepers.com',
-      password: adminPassword,
-      firstName: 'Admin',
-      lastName: 'User',
-      isAdmin: true,
-      createdAt: new Date(),
-    };
-    this.users.set(adminId, admin);
+  private async createDefaultUsers() {
+    try {
+      // Check if admin user exists
+      const existingAdmin = await db.select().from(users).where(eq(users.email, 'admin@wishkeepers.com')).limit(1);
+      
+      if (existingAdmin.length === 0) {
+        // Create admin user
+        const adminPassword = await hashPassword('admin123');
+        await db.insert(users).values({
+          email: 'admin@wishkeepers.com',
+          password: adminPassword,
+          firstName: 'Admin',
+          lastName: 'User',
+          isAdmin: true,
+        });
+      }
 
-    // Create test user leo@thel30project.com
-    const testUserId = randomUUID();
-    const testPassword = await hashPassword('Test25');
-    const testUser: User = {
-      id: testUserId,
-      email: 'leo@thel30project.com',
-      password: testPassword,
-      firstName: 'Leo',
-      lastName: 'Test',
-      isAdmin: false,
-      createdAt: new Date(),
-    };
-    this.users.set(testUserId, testUser);
+      // Check if test user exists
+      const existingTest = await db.select().from(users).where(eq(users.email, 'leo@thel30project.com')).limit(1);
+      
+      if (existingTest.length === 0) {
+        // Create test user
+        const testPassword = await hashPassword('Test25');
+        await db.insert(users).values({
+          email: 'leo@thel30project.com',
+          password: testPassword,
+          firstName: 'Leo',
+          lastName: 'Test',
+          isAdmin: false,
+        });
+      }
+    } catch (error) {
+      console.error('Error creating default users:', error);
+    }
   }
 
   async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = {
-      ...insertUser,
-      id,
-      isAdmin: false,
-      createdAt: new Date(),
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async getVault(id: string): Promise<Vault | undefined> {
-    const vault = this.vaults.get(id);
+    const [vault] = await db.select().from(vaults).where(eq(vaults.id, id));
     if (!vault) return undefined;
     
     // Decrypt fields for display
@@ -130,20 +129,16 @@ export class MemStorage implements IStorage {
   }
 
   async getVaultByUserId(userId: string): Promise<Vault | undefined> {
-    const vault = Array.from(this.vaults.values()).find(v => v.userId === userId);
+    const [vault] = await db.select().from(vaults).where(eq(vaults.userId, userId));
     if (!vault) return undefined;
     
     return this.getVault(vault.id);
   }
 
   async createVault(vaultData: InsertVault & { userId: string }): Promise<Vault> {
-    const id = randomUUID();
-    const now = new Date();
-    
     // Encrypt sensitive fields
-    const vault: Vault = {
+    const encryptedData = {
       ...vaultData,
-      id,
       funeralWishes: vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : null,
       lifeInsurance: vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : null,
       banking: vaultData.banking ? encryptField(vaultData.banking) : null,
@@ -151,35 +146,47 @@ export class MemStorage implements IStorage {
       specialRequests: vaultData.specialRequests ? encryptField(vaultData.specialRequests) : null,
       isComplete: false,
       completionPercentage: this.calculateCompletionPercentage(vaultData),
-      createdAt: now,
-      updatedAt: now,
     };
     
-    this.vaults.set(id, vault);
-    const decryptedVault = await this.getVault(id);
-    return decryptedVault!;
+    const [vault] = await db
+      .insert(vaults)
+      .values(encryptedData)
+      .returning();
+    
+    return this.getVault(vault.id)!;
   }
 
   async updateVault(id: string, vaultData: Partial<InsertVault>): Promise<Vault | undefined> {
-    const existing = this.vaults.get(id);
+    const [existing] = await db.select().from(vaults).where(eq(vaults.id, id));
     if (!existing) return undefined;
     
     // Encrypt updated fields
-    const updates: Partial<Vault> = {
+    const updates: any = {
       ...vaultData,
-      funeralWishes: vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : existing.funeralWishes,
-      lifeInsurance: vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : existing.lifeInsurance,
-      banking: vaultData.banking ? encryptField(vaultData.banking) : existing.banking,
-      personalMessages: vaultData.personalMessages ? encryptField(vaultData.personalMessages) : existing.personalMessages,
-      specialRequests: vaultData.specialRequests ? encryptField(vaultData.specialRequests) : existing.specialRequests,
+      funeralWishes: vaultData.funeralWishes !== undefined ? 
+        (vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : null) : 
+        existing.funeralWishes,
+      lifeInsurance: vaultData.lifeInsurance !== undefined ? 
+        (vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : null) : 
+        existing.lifeInsurance,
+      banking: vaultData.banking !== undefined ? 
+        (vaultData.banking ? encryptField(vaultData.banking) : null) : 
+        existing.banking,
+      personalMessages: vaultData.personalMessages !== undefined ? 
+        (vaultData.personalMessages ? encryptField(vaultData.personalMessages) : null) : 
+        existing.personalMessages,
+      specialRequests: vaultData.specialRequests !== undefined ? 
+        (vaultData.specialRequests ? encryptField(vaultData.specialRequests) : null) : 
+        existing.specialRequests,
       updatedAt: new Date(),
     };
     
-    const updated = { ...existing, ...updates };
-    updated.completionPercentage = this.calculateCompletionPercentage(updated);
-    updated.isComplete = updated.completionPercentage === 100;
+    // Calculate completion percentage
+    const tempData = { ...existing, ...vaultData };
+    updates.completionPercentage = this.calculateCompletionPercentage(tempData);
+    updates.isComplete = updates.completionPercentage === 100;
     
-    this.vaults.set(id, updated);
+    await db.update(vaults).set(updates).where(eq(vaults.id, id));
     return this.getVault(id);
   }
 
@@ -190,84 +197,81 @@ export class MemStorage implements IStorage {
   }
 
   async getTrustedContacts(vaultId: string): Promise<TrustedContact[]> {
-    return Array.from(this.trustedContacts.values()).filter(contact => contact.vaultId === vaultId);
+    return await db.select().from(trustedContacts).where(eq(trustedContacts.vaultId, vaultId));
   }
 
   async getTrustedContactByToken(token: string): Promise<TrustedContact | undefined> {
-    return Array.from(this.trustedContacts.values()).find(contact => contact.inviteToken === token);
+    const [contact] = await db.select().from(trustedContacts).where(eq(trustedContacts.inviteToken, token));
+    return contact || undefined;
   }
 
   async createTrustedContact(contactData: InsertTrustedContact & { vaultId: string }): Promise<TrustedContact> {
-    const id = randomUUID();
-    const contact: TrustedContact = {
-      ...contactData,
-      id,
-      status: 'pending',
-      inviteToken: randomUUID(),
-      invitedAt: new Date(),
-      confirmedAt: null,
-    };
-    
-    this.trustedContacts.set(id, contact);
+    const [contact] = await db
+      .insert(trustedContacts)
+      .values({
+        ...contactData,
+        status: 'pending',
+        inviteToken: randomUUID(),
+      })
+      .returning();
     return contact;
   }
 
   async updateTrustedContact(id: string, contactData: Partial<TrustedContact>): Promise<TrustedContact | undefined> {
-    const existing = this.trustedContacts.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...contactData };
+    const updates: any = { ...contactData };
     if (contactData.status === 'confirmed') {
-      updated.confirmedAt = new Date();
+      updates.confirmedAt = new Date();
     }
     
-    this.trustedContacts.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(trustedContacts)
+      .set(updates)
+      .where(eq(trustedContacts.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async getDataReleaseRequests(): Promise<DataReleaseRequest[]> {
-    return Array.from(this.dataReleaseRequests.values());
+    return await db.select().from(dataReleaseRequests);
   }
 
   async getDataReleaseRequest(id: string): Promise<DataReleaseRequest | undefined> {
-    return this.dataReleaseRequests.get(id);
+    const [request] = await db.select().from(dataReleaseRequests).where(eq(dataReleaseRequests.id, id));
+    return request || undefined;
   }
 
   async createDataReleaseRequest(requestData: InsertDataReleaseRequest & { vaultId: string, requesterId: string }): Promise<DataReleaseRequest> {
-    const id = randomUUID();
-    const request: DataReleaseRequest = {
-      ...requestData,
-      id,
-      status: 'pending',
-      requestDate: new Date(),
-      reviewedAt: null,
-      reviewedBy: null,
-      deathCertificate: requestData.deathCertificate || null,
-    };
-    
-    this.dataReleaseRequests.set(id, request);
+    const [request] = await db
+      .insert(dataReleaseRequests)
+      .values({
+        ...requestData,
+        status: 'pending',
+        deathCertificate: requestData.deathCertificate || null,
+      })
+      .returning();
     return request;
   }
 
   async updateDataReleaseRequest(id: string, requestData: Partial<DataReleaseRequest>): Promise<DataReleaseRequest | undefined> {
-    const existing = this.dataReleaseRequests.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...requestData };
+    const updates: any = { ...requestData };
     if (requestData.status && requestData.status !== 'pending') {
-      updated.reviewedAt = new Date();
+      updates.reviewedAt = new Date();
     }
     
-    this.dataReleaseRequests.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(dataReleaseRequests)
+      .set(updates)
+      .where(eq(dataReleaseRequests.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async getAllUsers(): Promise<User[]> {
-    return Array.from(this.users.values());
+    return await db.select().from(users);
   }
 
   async getAllVaults(): Promise<Vault[]> {
-    return Array.from(this.vaults.values());
+    return await db.select().from(vaults);
   }
 
   async getVaultStats(): Promise<{
@@ -276,17 +280,17 @@ export class MemStorage implements IStorage {
     completedVaults: number;
     pendingRequests: number;
   }> {
-    const users = await this.getAllUsers();
-    const vaults = await this.getAllVaults();
+    const allUsers = await this.getAllUsers();
+    const allVaults = await this.getAllVaults();
     const requests = await this.getDataReleaseRequests();
     
     return {
-      totalUsers: users.length,
-      activeVaults: vaults.length,
-      completedVaults: vaults.filter(v => v.isComplete).length,
+      totalUsers: allUsers.length,
+      activeVaults: allVaults.length,
+      completedVaults: allVaults.filter(v => v.isComplete).length,
       pendingRequests: requests.filter(r => r.status === 'pending').length,
     };
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

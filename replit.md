@@ -36,7 +36,7 @@ The application follows a full-stack monorepo architecture with a clear separati
 - **API Design**: RESTful endpoints with consistent error handling
 - **Session Management**: Express session with secure cookie configuration
 - **Middleware**: Authentication and authorization middleware for protected routes
-- **Storage Pattern**: Repository pattern with in-memory storage (ready for database implementation)
+- **Storage Pattern**: Repository pattern with PostgreSQL database using Drizzle ORM
 
 ### Database Schema
 - **Users**: Core user accounts with admin role support
@@ -106,3 +106,13 @@ The application follows a full-stack monorepo architecture with a clear separati
 ### Development vs Production
 - **Development**: Hot module replacement, debug logging, development SMTP
 - **Production**: Optimized builds, secure configurations, production database connections
+
+## Recent Changes
+
+### January 28, 2025
+- **Database Integration**: Successfully migrated from in-memory storage to PostgreSQL database
+  - Added Neon serverless PostgreSQL with Drizzle ORM integration
+  - Created persistent database schema for all entities (users, vaults, trusted contacts, data release requests)
+  - Maintained field-level encryption for sensitive vault data
+  - Preserved test user accounts: leo@thel30project.com (Test25) and admin@wishkeepers.com (admin123)
+  - Application now provides persistent data storage across server restarts
