@@ -28,8 +28,8 @@ export function HeroSection() {
           </div>
           <div className="relative">
             <img 
-              src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
-              alt="Hands gently holding a glowing heart" 
+              src="https://images.unsplash.com/photo-1544027993-37dbf35d25cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+              alt="Peaceful hands holding a small plant, symbolizing growth, care, and legacy" 
               className="rounded-2xl shadow-xl w-full h-auto"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl"></div>
