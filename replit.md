@@ -126,3 +126,14 @@ The application follows a full-stack monorepo architecture with a clear separati
   - Created Users & Vaults overview page showing administrative metadata without exposing sensitive vault content
   - Fixed admin sign out functionality and API routing issues
   - Updated navigation to show only relevant sections based on user role
+- **Admin Analytics Dashboard**: Added comprehensive analytics and charts
+  - Interactive line chart tracking user registrations over time (12 months)
+  - Bar chart showing data release requests over time
+  - Pie chart displaying vault completion time distribution
+  - System insights with average completion times and approval rates
+  - Real-time stats cards for quick overview
+- **Enhanced Home Page**: Improved "Learn More" modal with comprehensive information
+  - Key benefits section explaining time savings, stress reduction, and peace of mind
+  - Data protection details covering bank-level encryption and zero-knowledge access
+  - Smart estate planning tips including using wishes for gifting outside the will
+  - Thoughtful recommendations for asset exposure reduction and probate optimization
