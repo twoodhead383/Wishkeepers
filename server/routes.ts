@@ -9,7 +9,8 @@ import {
   loginSchema, 
   insertVaultSchema,
   insertTrustedContactSchema,
-  insertDataReleaseRequestSchema 
+  insertDataReleaseRequestSchema,
+  insertThirdPartySchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -271,6 +272,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     res.json({ request: updated });
+  });
+
+  // Third party routes (admin only)
+  app.get('/api/admin/third-parties', requireAdmin, async (req, res) => {
+    try {
+      const thirdParties = await storage.getThirdParties();
+      res.json(thirdParties);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch third parties', error });
+    }
+  });
+
+  app.post('/api/admin/third-parties', requireAdmin, async (req, res) => {
+    try {
+      const thirdPartyData = insertThirdPartySchema.parse(req.body);
+      const thirdParty = await storage.createThirdParty(thirdPartyData);
+      res.json(thirdParty);
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid data', error });
+    }
+  });
+
+  app.put('/api/admin/third-parties/:id', requireAdmin, async (req, res) => {
+    try {
+      const thirdPartyData = insertThirdPartySchema.parse(req.body);
+      const updated = await storage.updateThirdParty(req.params.id, thirdPartyData);
+      
+      if (!updated) {
+        return res.status(404).json({ message: 'Third party not found' });
+      }
+      
+      res.json(updated);
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid data', error });
+    }
+  });
+
+  app.delete('/api/admin/third-parties/:id', requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteThirdParty(req.params.id);
+      res.json({ message: 'Third party deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to delete third party', error });
+    }
   });
 
   const httpServer = createServer(app);

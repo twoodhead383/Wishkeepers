@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Layout } from "@/components/layout";
+import { AdminLayout } from "@/components/admin-layout";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +46,7 @@ export default function Admin() {
 
   if (!isAuthenticated || !user?.isAdmin) {
     return (
-      <Layout>
+      <AdminLayout>
         <div className="min-h-screen flex items-center justify-center">
           <Card className="w-full max-w-md">
             <CardContent className="pt-6 text-center">
@@ -55,7 +55,7 @@ export default function Admin() {
             </CardContent>
           </Card>
         </div>
-      </Layout>
+      </AdminLayout>
     );
   }
 
@@ -72,8 +72,8 @@ export default function Admin() {
   };
 
   return (
-    <Layout>
-      <div className="py-16 bg-gray-50">
+    <AdminLayout>
+      <div className="py-8 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
@@ -225,6 +225,6 @@ export default function Admin() {
           </div>
         </div>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }

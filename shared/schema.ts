@@ -126,6 +126,29 @@ export const insertDataReleaseRequestSchema = createInsertSchema(dataReleaseRequ
   status: true,
 });
 
+// Third Party Partners Schema
+export const thirdParties = pgTable("third_parties", {
+  id: text("id").primaryKey().$defaultFn(() => nanoid()),
+  companyName: text("company_name").notNull(),
+  contactPerson: text("contact_person").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  website: text("website"),
+  referralLink: text("referral_link"),
+  serviceCategory: text("service_category").notNull(),
+  description: text("description").notNull(),
+  agreementDate: text("agreement_date").notNull(),
+  status: text("status", { enum: ["active", "inactive", "pending"] }).notNull().default("active"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const insertThirdPartySchema = createInsertSchema(thirdParties).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Login schema
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -142,4 +165,6 @@ export type TrustedContact = typeof trustedContacts.$inferSelect;
 export type InsertTrustedContact = z.infer<typeof insertTrustedContactSchema>;
 export type DataReleaseRequest = typeof dataReleaseRequests.$inferSelect;
 export type InsertDataReleaseRequest = z.infer<typeof insertDataReleaseRequestSchema>;
+export type ThirdParty = typeof thirdParties.$inferSelect;
+export type InsertThirdParty = z.infer<typeof insertThirdPartySchema>;
 export type LoginRequest = z.infer<typeof loginSchema>;

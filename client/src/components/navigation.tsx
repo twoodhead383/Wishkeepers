@@ -31,25 +31,29 @@ export function Navigation() {
           <div className="hidden md:flex items-center space-x-8">
             {isAuthenticated ? (
               <>
-                <Link href="/dashboard">
-                  <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/dashboard') ? 'text-blue-600 font-medium' : ''}`}>
-                    Dashboard
-                  </span>
-                </Link>
-                <Link href="/vault">
-                  <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/vault') ? 'text-blue-600 font-medium' : ''}`}>
-                    My Vault
-                  </span>
-                </Link>
-                <Link href="/trusted-contacts">
-                  <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/trusted-contacts') ? 'text-blue-600 font-medium' : ''}`}>
-                    Trusted Contacts
-                  </span>
-                </Link>
+                {!user?.isAdmin && (
+                  <>
+                    <Link href="/dashboard">
+                      <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/dashboard') ? 'text-blue-600 font-medium' : ''}`}>
+                        Dashboard
+                      </span>
+                    </Link>
+                    <Link href="/vault">
+                      <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/vault') ? 'text-blue-600 font-medium' : ''}`}>
+                        My Vault
+                      </span>
+                    </Link>
+                    <Link href="/trusted-contacts">
+                      <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/trusted-contacts') ? 'text-blue-600 font-medium' : ''}`}>
+                        Trusted Contacts
+                      </span>
+                    </Link>
+                  </>
+                )}
                 {user?.isAdmin && (
                   <Link href="/admin">
-                    <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/admin') ? 'text-blue-600 font-medium' : ''}`}>
-                      Admin
+                    <span className={`text-gray-600 hover:text-blue-600 transition-colors ${location.startsWith('/admin') ? 'text-blue-600 font-medium' : ''}`}>
+                      Admin Dashboard
                     </span>
                   </Link>
                 )}
@@ -100,25 +104,29 @@ export function Navigation() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-100">
               {isAuthenticated ? (
                 <>
-                  <Link href="/dashboard">
-                    <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
-                      Dashboard
-                    </div>
-                  </Link>
-                  <Link href="/vault">
-                    <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
-                      My Vault
-                    </div>
-                  </Link>
-                  <Link href="/trusted-contacts">
-                    <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
-                      Trusted Contacts
-                    </div>
-                  </Link>
+                  {!user?.isAdmin && (
+                    <>
+                      <Link href="/dashboard">
+                        <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
+                          Dashboard
+                        </div>
+                      </Link>
+                      <Link href="/vault">
+                        <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
+                          My Vault
+                        </div>
+                      </Link>
+                      <Link href="/trusted-contacts">
+                        <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
+                          Trusted Contacts
+                        </div>
+                      </Link>
+                    </>
+                  )}
                   {user?.isAdmin && (
                     <Link href="/admin">
                       <div className="block px-3 py-2 text-gray-600 hover:text-blue-600" onClick={() => setMobileMenuOpen(false)}>
-                        Admin
+                        Admin Dashboard
                       </div>
                     </Link>
                   )}

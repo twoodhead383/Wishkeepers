@@ -7,10 +7,13 @@ import {
   type InsertTrustedContact,
   type DataReleaseRequest,
   type InsertDataReleaseRequest,
+  type ThirdParty,
+  type InsertThirdParty,
   users,
   vaults,
   trustedContacts,
-  dataReleaseRequests
+  dataReleaseRequests,
+  thirdParties
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { encryptField, decryptField } from "./encryption";
@@ -51,6 +54,12 @@ export interface IStorage {
     completedVaults: number;
     pendingRequests: number;
   }>;
+  
+  // Third Parties
+  getThirdParties(): Promise<ThirdParty[]>;
+  createThirdParty(thirdParty: InsertThirdParty): Promise<ThirdParty>;
+  updateThirdParty(id: string, thirdParty: Partial<InsertThirdParty>): Promise<ThirdParty | undefined>;
+  deleteThirdParty(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -298,6 +307,39 @@ export class DatabaseStorage implements IStorage {
       completedVaults: allVaults.filter(v => v.isComplete).length,
       pendingRequests: requests.filter(r => r.status === 'pending').length,
     };
+  }
+
+  // Third Party methods
+  async getThirdParties(): Promise<ThirdParty[]> {
+    return await db.select().from(thirdParties);
+  }
+
+  async createThirdParty(thirdPartyData: InsertThirdParty): Promise<ThirdParty> {
+    const [thirdParty] = await db
+      .insert(thirdParties)
+      .values({
+        ...thirdPartyData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return thirdParty;
+  }
+
+  async updateThirdParty(id: string, thirdPartyData: Partial<InsertThirdParty>): Promise<ThirdParty | undefined> {
+    const [updated] = await db
+      .update(thirdParties)
+      .set({
+        ...thirdPartyData,
+        updatedAt: new Date(),
+      })
+      .where(eq(thirdParties.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteThirdParty(id: string): Promise<void> {
+    await db.delete(thirdParties).where(eq(thirdParties.id, id));
   }
 }
 

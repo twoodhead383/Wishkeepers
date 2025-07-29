@@ -13,7 +13,26 @@ import Dashboard from "@/pages/dashboard";
 import Vault from "@/pages/vault";
 import TrustedContacts from "@/pages/trusted-contacts";
 import Admin from "@/pages/admin";
+import ThirdParties from "@/pages/admin/third-parties";
 import NotFound from "@/pages/not-found";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect } from "react";
+import { useLocation } from "wouter";
+
+function AdminRedirect() {
+  const { user, isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (isAuthenticated && user?.isAdmin) {
+      setLocation("/admin");
+    } else if (isAuthenticated) {
+      setLocation("/dashboard");
+    }
+  }, [isAuthenticated, user, setLocation]);
+
+  return null;
+}
 
 function Router() {
   return (
@@ -25,6 +44,8 @@ function Router() {
       <Route path="/vault" component={Vault} />
       <Route path="/trusted-contacts" component={TrustedContacts} />
       <Route path="/admin" component={Admin} />
+      <Route path="/admin/third-parties" component={ThirdParties} />
+      <Route path="/redirect" component={AdminRedirect} />
       <Route component={NotFound} />
     </Switch>
   );
