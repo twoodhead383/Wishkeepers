@@ -79,12 +79,12 @@ export class MemStorage implements IStorage {
     };
     this.users.set(adminId, admin);
 
-    // Create test user leo@l30project.com
+    // Create test user leo@thel30project.com
     const testUserId = randomUUID();
     const testPassword = await hashPassword('Test25');
     const testUser: User = {
       id: testUserId,
-      email: 'leo@l30project.com',
+      email: 'leo@thel30project.com',
       password: testPassword,
       firstName: 'Leo',
       lastName: 'Test',
