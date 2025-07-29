@@ -53,15 +53,32 @@ export default function ThirdParties() {
 
   const { data: thirdParties = [] } = useQuery({
     queryKey: ["/api/admin/third-parties"],
-    queryFn: () => apiRequest("/api/admin/third-parties"),
+    queryFn: async () => {
+      const response = await fetch("/api/admin/third-parties", {
+        credentials: "include"
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch third parties");
+      }
+      return response.json();
+    },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: z.infer<typeof thirdPartySchema>) =>
-      apiRequest("/api/admin/third-parties", {
+    mutationFn: async (data: z.infer<typeof thirdPartySchema>) => {
+      const response = await fetch("/api/admin/third-parties", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
         body: JSON.stringify(data),
-      }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create third party");
+      }
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/third-parties"] });
       setDialogOpen(false);
@@ -81,11 +98,20 @@ export default function ThirdParties() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: z.infer<typeof thirdPartySchema> }) =>
-      apiRequest(`/api/admin/third-parties/${id}`, {
+    mutationFn: async ({ id, data }: { id: string; data: z.infer<typeof thirdPartySchema> }) => {
+      const response = await fetch(`/api/admin/third-parties/${id}`, {
         method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
         body: JSON.stringify(data),
-      }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update third party");
+      }
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/third-parties"] });
       setDialogOpen(false);
@@ -106,10 +132,16 @@ export default function ThirdParties() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      apiRequest(`/api/admin/third-parties/${id}`, {
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/admin/third-parties/${id}`, {
         method: "DELETE",
-      }),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete third party");
+      }
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/third-parties"] });
       toast({
