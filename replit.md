@@ -137,3 +137,8 @@ The application follows a full-stack monorepo architecture with a clear separati
   - Data protection details covering bank-level encryption and zero-knowledge access
   - Smart estate planning tips including using wishes for gifting outside the will
   - Thoughtful recommendations for asset exposure reduction and probate optimization
+- **Navigation Content Modals**: Added comprehensive information modals for top navigation
+  - "How it Works" modal with step-by-step process, feature details, and access procedures
+  - "Security" modal explaining AES-256 encryption, zero-knowledge access, and privacy rights
+  - "Support" modal with contact options, FAQ section, and emergency support information
+  - All modals feature professional design with icons, color-coded sections, and clear information hierarchy
