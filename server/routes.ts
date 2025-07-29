@@ -244,6 +244,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ stats });
   });
 
+  app.get('/api/admin/analytics', requireAdmin, async (req, res) => {
+    const analytics = await storage.getAnalytics();
+    res.json({ analytics });
+  });
+
   app.get('/api/admin/users', requireAdmin, async (req, res) => {
     const users = await storage.getAllUsers();
     res.json({ users: users.map(u => ({ ...u, password: undefined })) });

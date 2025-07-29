@@ -309,6 +309,56 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
+  async getAnalytics() {
+    const allUsers = await this.getAllUsers();
+    const allVaults = await this.getAllVaults();
+    const allRequests = await this.getDataReleaseRequests();
+
+    // User registrations over time (last 12 months)
+    const userRegistrations = this.getTimeSeriesData(allUsers, 'createdAt', 12);
+    
+    // Vault completion times (days to complete)
+    const vaultCompletionTimes = allVaults
+      .filter(v => v.isComplete && v.createdAt && v.updatedAt)
+      .map(v => ({
+        days: Math.ceil((new Date(v.updatedAt!).getTime() - new Date(v.createdAt!).getTime()) / (1000 * 60 * 60 * 24)),
+        completedAt: v.updatedAt
+      }))
+      .sort((a, b) => a.days - b.days);
+
+    // Release requests over time (last 12 months)
+    const releaseRequests = this.getTimeSeriesData(allRequests, 'createdAt', 12);
+
+    return {
+      userRegistrations,
+      vaultCompletionTimes,
+      releaseRequests,
+    };
+  }
+
+  private getTimeSeriesData(data: any[], dateField: string, months: number) {
+    const now = new Date();
+    const result = [];
+    
+    for (let i = months - 1; i >= 0; i--) {
+      const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+      
+      const count = data.filter(item => {
+        const itemDate = new Date(item[dateField]);
+        return itemDate >= monthStart && itemDate <= monthEnd;
+      }).length;
+
+      result.push({
+        month: monthStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        count,
+        date: monthStart.toISOString()
+      });
+    }
+    
+    return result;
+  }
+
   // Third Party methods
   async getThirdParties(): Promise<ThirdParty[]> {
     return await db.select().from(thirdParties);
