@@ -63,17 +63,35 @@ export class MemStorage implements IStorage {
   }
 
   private async createAdminUser() {
+    const { hashPassword } = await import('./auth');
+    
+    // Create admin user
     const adminId = randomUUID();
+    const adminPassword = await hashPassword('admin123');
     const admin: User = {
       id: adminId,
       email: 'admin@wishkeepers.com',
-      password: '$2b$10$hash', // This would be properly hashed
+      password: adminPassword,
       firstName: 'Admin',
       lastName: 'User',
       isAdmin: true,
       createdAt: new Date(),
     };
     this.users.set(adminId, admin);
+
+    // Create test user leo@l30project.com
+    const testUserId = randomUUID();
+    const testPassword = await hashPassword('Test25');
+    const testUser: User = {
+      id: testUserId,
+      email: 'leo@l30project.com',
+      password: testPassword,
+      firstName: 'Leo',
+      lastName: 'Test',
+      isAdmin: false,
+      createdAt: new Date(),
+    };
+    this.users.set(testUserId, testUser);
   }
 
   async getUser(id: string): Promise<User | undefined> {
