@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout";
 import { HeroSection } from "@/components/hero-section";
 import { FeaturesSection } from "@/components/features-section";
 import { useAuth } from "@/hooks/use-auth";
@@ -16,7 +15,7 @@ export default function Home() {
   }, [isAuthenticated, setLocation]);
 
   return (
-    <Layout>
+    <>
       <HeroSection />
       <FeaturesSection />
       
@@ -61,6 +60,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </Layout>
+    </>
   );
 }
