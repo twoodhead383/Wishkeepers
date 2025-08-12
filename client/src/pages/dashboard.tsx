@@ -158,7 +158,7 @@ export default function Dashboard() {
                           )}
                         </div>
                         <p className="text-sm text-gray-600 mb-4">{section.description}</p>
-                        <Link href={section.id === "contacts" ? "/trusted-contacts" : "/vault"}>
+                        <Link href={section.id === "contacts" ? "/trusted-contacts" : `/vault?section=${section.id}`}>
                           <Button 
                             variant="ghost" 
                             size="sm" 

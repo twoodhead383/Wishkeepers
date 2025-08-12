@@ -3,10 +3,21 @@ import { VaultForm } from "@/components/vault-form";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/lib/api";
 import { useLocation } from "wouter";
+import { useEffect, useState } from "react";
 
 export default function Vault() {
   const { isAuthenticated } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const [activeSection, setActiveSection] = useState<string>("funeral");
+
+  // Parse URL parameters to get the section
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const section = urlParams.get('section');
+    if (section) {
+      setActiveSection(section);
+    }
+  }, [location]);
 
   const { data: vaultData, isLoading } = useQuery({
     queryKey: ["/api/vault"],
@@ -34,6 +45,7 @@ export default function Vault() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <VaultForm 
           initialData={vaultData?.vault} 
+          initialSection={activeSection}
           onSuccess={() => setLocation("/dashboard")}
         />
       </div>

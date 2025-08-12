@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,14 +16,30 @@ import { Church, Music, Gift, MessageCircle, Umbrella, Building, Wand2 } from "l
 
 interface VaultFormProps {
   initialData?: Partial<InsertVault>;
+  initialSection?: string;
   onSuccess?: () => void;
 }
 
-export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
+export function VaultForm({ initialData, initialSection = "funeral", onSuccess }: VaultFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [activeSection, setActiveSection] = useState("funeral");
+  const [activeSection, setActiveSection] = useState(initialSection);
   const [showFuneralWizard, setShowFuneralWizard] = useState(false);
+
+  // Update active section when initialSection changes
+  useEffect(() => {
+    // Map dashboard section IDs to vault form section IDs
+    const sectionMapping: Record<string, string> = {
+      'funeral': 'funeral',
+      'insurance': 'insurance', 
+      'banking': 'banking',
+      'messages': 'messages',
+      'requests': 'requests'
+    };
+    
+    const mappedSection = sectionMapping[initialSection] || initialSection;
+    setActiveSection(mappedSection);
+  }, [initialSection]);
 
   const form = useForm<InsertVault>({
     resolver: zodResolver(insertVaultSchema),
