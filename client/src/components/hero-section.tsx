@@ -32,12 +32,12 @@ export function HeroSection() {
         <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
           <div className="mb-12 lg:mb-0 text-white">
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-              Welcome to<br />
-              WishKeepers
+              Protect your legacy.<br />
+              Give peace of mind.
             </h1>
             <p className="text-xl lg:text-2xl text-orange-300 mb-8 leading-relaxed">
-              Helping you and your loved ones<br />
-              with your end of life wishes.
+              Securely store your final wishes so your loved ones<br />
+              have clarity, comfort, and guidance when it matters most.
             </p>
             <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex">
               <Link href="/register">
