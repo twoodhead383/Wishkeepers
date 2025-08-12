@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { Request, Response, NextFunction } from 'express';
 
 export async function hashPassword(password: string): Promise<string> {
-  const saltRounds = 10;
+  const saltRounds = 12; // Increased from 10 for better security
   return bcrypt.hash(password, saltRounds);
 }
 

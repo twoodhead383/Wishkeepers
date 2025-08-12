@@ -61,6 +61,13 @@ export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
   isAdmin: true,
+}).extend({
+  password: z.string()
+    .min(8, "Password must be at least 8 characters long")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one lowercase letter, one uppercase letter, and one number"),
+  email: z.string().email("Invalid email format").max(320, "Email too long"),
+  firstName: z.string().min(1, "First name is required").max(100, "First name too long"),
+  lastName: z.string().min(1, "Last name is required").max(100, "Last name too long")
 });
 
 // Funeral data schema
@@ -152,8 +159,8 @@ export const insertThirdPartySchema = createInsertSchema(thirdParties).omit({
 
 // Login schema
 export const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("Invalid email format").max(320, "Email too long"),
+  password: z.string().min(1, "Password is required").max(200, "Password too long"),
 });
 
 // Types

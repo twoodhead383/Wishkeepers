@@ -1,13 +1,19 @@
 import crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-gcm';
-const SECRET_KEY = crypto.scryptSync(process.env.ENCRYPTION_KEY || 'default-secret-key-32-characters!!', 'salt', 32);
+
+// Ensure we have a proper encryption key
+if (!process.env.ENCRYPTION_KEY) {
+  throw new Error('ENCRYPTION_KEY environment variable is required for security');
+}
+
+const SECRET_KEY = crypto.scryptSync(process.env.ENCRYPTION_KEY, 'salt', 32);
 
 export function encryptField(text: string): string {
   if (!text) return text;
   
   const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipher(ALGORITHM, SECRET_KEY);
+  const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, iv);
   
   let encrypted = cipher.update(text, 'utf8', 'hex');
   encrypted += cipher.final('hex');
@@ -28,7 +34,7 @@ export function decryptField(encryptedText: string): string {
     const authTag = Buffer.from(parts[1], 'hex');
     const encrypted = parts[2];
     
-    const decipher = crypto.createDecipher(ALGORITHM, SECRET_KEY);
+    const decipher = crypto.createDecipheriv(ALGORITHM, SECRET_KEY, iv);
     decipher.setAuthTag(authTag);
     
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');

@@ -79,7 +79,7 @@ export default function Dashboard() {
       title: "Trusted Contacts",
       icon: Users,
       color: "teal",
-      completed: contacts.some(c => c.status === "confirmed"),
+      completed: contacts.some((c: any) => c.status === "confirmed"),
       description: "People who can access your vault when needed.",
     },
   ];

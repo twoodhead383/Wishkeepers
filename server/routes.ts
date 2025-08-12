@@ -15,15 +15,23 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Ensure we have a session secret
+  if (!process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET environment variable is required for security');
+  }
+
   // Session configuration
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
-    }
+      httpOnly: true, // Prevent XSS attacks
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax' // CSRF protection
+    },
+    name: 'wishkeepers_session' // Don't use default session name
   }));
 
   // Auth routes
@@ -60,7 +68,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } 
       });
     } catch (error) {
-      res.status(400).json({ message: 'Invalid data', error });
+      console.error('Registration error:', error);
+      res.status(400).json({ message: 'Invalid registration data' });
     }
   });
 
@@ -91,7 +100,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } 
       });
     } catch (error) {
-      res.status(400).json({ message: 'Invalid data', error });
+      console.error('Login error:', error);
+      res.status(400).json({ message: 'Invalid login data' });
     }
   });
 
@@ -105,26 +115,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get('/api/me', requireAuth, async (req, res) => {
-    const user = await storage.getUser(req.session.userId!);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      res.json({ 
+        user: { 
+          id: user.id, 
+          email: user.email, 
+          firstName: user.firstName, 
+          lastName: user.lastName,
+          isAdmin: user.isAdmin 
+        } 
+      });
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ message: 'Failed to fetch user data' });
     }
-    
-    res.json({ 
-      user: { 
-        id: user.id, 
-        email: user.email, 
-        firstName: user.firstName, 
-        lastName: user.lastName,
-        isAdmin: user.isAdmin 
-      } 
-    });
   });
 
   // Vault routes
   app.get('/api/vault', requireAuth, async (req, res) => {
-    const vault = await storage.getVaultByUserId(req.session.userId!);
-    res.json({ vault });
+    try {
+      const vault = await storage.getVaultByUserId(req.session.userId!);
+      res.json({ vault });
+    } catch (error) {
+      console.error('Error fetching vault:', error);
+      res.status(500).json({ message: 'Failed to fetch vault data' });
+    }
   });
 
   app.post('/api/vault', requireAuth, async (req, res) => {
