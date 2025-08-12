@@ -36,8 +36,7 @@ export function HeroSection() {
               Give peace of mind.
             </h1>
             <p className="text-xl lg:text-2xl text-orange-300 mb-8 leading-relaxed">
-              Securely store your final wishes so your loved ones<br />
-              have clarity, comfort, and guidance when it matters most.
+              Securely store your final wishes and key information so your loved ones have clarity, comfort, and guidance when it matters most.
             </p>
             <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex">
               <Link href="/register">
