@@ -131,7 +131,7 @@ export class DatabaseStorage implements IStorage {
     return {
       ...vault,
       funeralWishes: vault.funeralWishes ? decryptField(vault.funeralWishes) : null,
-      funeralData: vault.funeralData ? JSON.parse(vault.funeralData as string) : null,
+      funeralData: vault.funeralData || null,
       lifeInsurance: vault.lifeInsurance ? decryptField(vault.lifeInsurance) : null,
       banking: vault.banking ? decryptField(vault.banking) : null,
       personalMessages: vault.personalMessages ? decryptField(vault.personalMessages) : null,
@@ -151,7 +151,7 @@ export class DatabaseStorage implements IStorage {
     const encryptedData = {
       ...vaultData,
       funeralWishes: vaultData.funeralWishes && vaultData.funeralWishes.trim() ? encryptField(vaultData.funeralWishes) : null,
-      funeralData: vaultData.funeralData ? JSON.stringify(vaultData.funeralData) : null,
+      funeralData: vaultData.funeralData || null,
       lifeInsurance: vaultData.lifeInsurance && vaultData.lifeInsurance.trim() ? encryptField(vaultData.lifeInsurance) : null,
       banking: vaultData.banking && vaultData.banking.trim() ? encryptField(vaultData.banking) : null,
       personalMessages: vaultData.personalMessages && vaultData.personalMessages.trim() ? encryptField(vaultData.personalMessages) : null,
@@ -181,7 +181,7 @@ export class DatabaseStorage implements IStorage {
         (vaultData.funeralWishes && vaultData.funeralWishes.trim() ? encryptField(vaultData.funeralWishes) : null) : 
         existing.funeralWishes,
       funeralData: vaultData.funeralData !== undefined ? 
-        (vaultData.funeralData ? JSON.stringify(vaultData.funeralData) : null) : 
+        (vaultData.funeralData || null) : 
         existing.funeralData,
       lifeInsurance: vaultData.lifeInsurance !== undefined ? 
         (vaultData.lifeInsurance && vaultData.lifeInsurance.trim() ? encryptField(vaultData.lifeInsurance) : null) : 
