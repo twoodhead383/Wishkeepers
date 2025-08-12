@@ -60,8 +60,116 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
     saveMutation.mutate(data);
   };
 
+  const generateFuneralSummary = (funeralData: FuneralData): string => {
+    const sections: string[] = [];
+    
+    // Religious/Spiritual Orientation
+    if (funeralData.religiousOrientation) {
+      let orientationText = `Religious Orientation: ${funeralData.religiousOrientation}`;
+      if (funeralData.denomination) {
+        orientationText += ` (${funeralData.denomination})`;
+      }
+      sections.push(orientationText);
+      
+      if (funeralData.faithLeader) {
+        sections.push(`Faith Leader: ${funeralData.faithLeader}`);
+      }
+    }
+    
+    // Service Type and Location
+    if (funeralData.serviceType) {
+      sections.push(`Service Type: ${funeralData.serviceType.replace(/_/g, ' ')}`);
+    }
+    if (funeralData.serviceLocation) {
+      sections.push(`Service Location: ${funeralData.serviceLocation}`);
+    }
+    
+    // Tone and Atmosphere
+    if (funeralData.tone) {
+      sections.push(`Tone: ${funeralData.tone.replace(/_/g, ' ')}`);
+    }
+    if (funeralData.dressCode) {
+      sections.push(`Dress Code: ${funeralData.dressCode}`);
+    }
+    
+    // Disposal Method
+    if (funeralData.disposalMethod) {
+      let disposalText = `Disposal Method: ${funeralData.disposalMethod.replace(/_/g, ' ')}`;
+      if (funeralData.disposalDetails) {
+        disposalText += ` - ${funeralData.disposalDetails}`;
+      }
+      sections.push(disposalText);
+    }
+    if (funeralData.remainsLocation) {
+      sections.push(`Remains Location: ${funeralData.remainsLocation}`);
+    }
+    
+    // Readings and Poems
+    if (funeralData.readings && funeralData.readings.length > 0) {
+      sections.push(`Readings: ${funeralData.readings.join(', ')}`);
+    }
+    if (funeralData.poems && funeralData.poems.length > 0) {
+      sections.push(`Poems: ${funeralData.poems.join(', ')}`);
+    }
+    
+    // Music
+    if (funeralData.music && funeralData.music.length > 0) {
+      sections.push(`Music: ${funeralData.music.join(', ')}`);
+    }
+    
+    // Traditions and Special Elements
+    if (funeralData.traditions && funeralData.traditions.length > 0) {
+      sections.push(`Traditions: ${funeralData.traditions.join(', ')}`);
+    }
+    if (funeralData.spiritualElements) {
+      sections.push('Include spiritual elements in the service');
+    }
+    if (funeralData.naturePreferences) {
+      sections.push(`Nature Preferences: ${funeralData.naturePreferences}`);
+    }
+    
+    // Speakers
+    if (funeralData.speakers && funeralData.speakers.length > 0) {
+      sections.push(`Speakers: ${funeralData.speakers.join(', ')}`);
+    }
+    
+    // Visual Elements
+    if (funeralData.visuals) {
+      const visualElements = [];
+      if (funeralData.visuals.photos) visualElements.push('Photos');
+      if (funeralData.visuals.slideshow) visualElements.push('Slideshow');
+      if (funeralData.visuals.videos) visualElements.push('Videos');
+      if (visualElements.length > 0) {
+        sections.push(`Visual Elements: ${visualElements.join(', ')}`);
+      }
+    }
+    
+    // Attendees
+    if (funeralData.attendees) {
+      if (funeralData.attendees.include && funeralData.attendees.include.length > 0) {
+        sections.push(`Special Invitations: ${funeralData.attendees.include.join(', ')}`);
+      }
+      if (funeralData.attendees.exclude && funeralData.attendees.exclude.length > 0) {
+        sections.push(`Please do not invite: ${funeralData.attendees.exclude.join(', ')}`);
+      }
+    }
+    
+    // Family Notes
+    if (funeralData.familyNotes) {
+      sections.push(`Special Notes for Family: ${funeralData.familyNotes}`);
+    }
+    
+    return sections.join('\n\n');
+  };
+
   const handleFuneralWizardSave = (funeralData: FuneralData) => {
+    // Generate a human-readable summary from the wizard data
+    const summary = generateFuneralSummary(funeralData);
+    
+    // Update both the structured data and the traditional text field
     form.setValue('funeralData', funeralData);
+    form.setValue('funeralWishes', summary);
+    
     const currentData = form.getValues();
     saveMutation.mutate(currentData);
     setShowFuneralWizard(false);
@@ -155,7 +263,7 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <h5 className="font-semibold text-green-800 mb-2">Your Current Funeral Plan</h5>
                     <p className="text-green-700 text-sm mb-3">
-                      You've completed the guided funeral planning. You can edit your plan anytime.
+                      You've completed the guided funeral planning. Your plan summary has been automatically added to the traditional text area below for easy editing.
                     </p>
                     <Button 
                       type="button"
@@ -172,7 +280,12 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <FormLabel>Traditional Text Entry</FormLabel>
-                    <span className="text-xs text-gray-500">For those who prefer writing freely</span>
+                    <span className="text-xs text-gray-500">
+                      {form.getValues('funeralWishes') && form.getValues('funeralData') 
+                        ? "Generated from your guided plan - feel free to edit" 
+                        : "For those who prefer writing freely"
+                      }
+                    </span>
                   </div>
                   <FormField
                     control={form.control}
@@ -181,12 +294,22 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
                       <FormItem>
                         <FormControl>
                           <Textarea
-                            placeholder="Alternatively, you can describe your preferences here in your own words..."
+                            placeholder={
+                              form.getValues('funeralData') 
+                                ? "Your funeral plan will appear here after completing the guided wizard above..." 
+                                : "Alternatively, you can describe your preferences here in your own words..."
+                            }
                             className="min-h-[150px] resize-none"
                             {...field}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
+                        {form.getValues('funeralWishes') && form.getValues('funeralData') && (
+                          <p className="text-xs text-blue-600 mt-2">
+                            ✨ This summary was generated from your guided funeral planning. You can edit it as needed.
+                          </p>
+                        )}
                       </FormItem>
                     )}
                   />
