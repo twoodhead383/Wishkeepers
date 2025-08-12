@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { FuneralWizard } from "@/components/funeral-wizard";
-import { Church, Music, Gift, Heart, Umbrella, Building, Wand2 } from "lucide-react";
+import { Church, Music, Gift, MessageCircle, Umbrella, Building, Wand2 } from "lucide-react";
 
 interface VaultFormProps {
   initialData?: Partial<InsertVault>;
@@ -71,7 +71,7 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
     { id: "funeral", title: "Funeral Wishes", icon: Church, color: "text-green-600" },
     { id: "insurance", title: "Life Insurance", icon: Umbrella, color: "text-blue-600" },
     { id: "banking", title: "Banking", icon: Building, color: "text-yellow-600" },
-    { id: "messages", title: "Personal Messages", icon: Heart, color: "text-purple-600" },
+    { id: "messages", title: "Personal Messages", icon: MessageCircle, color: "text-purple-600" },
     { id: "requests", title: "Special Requests", icon: Gift, color: "text-indigo-600" },
   ];
 
@@ -291,7 +291,7 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Heart className="h-6 w-6 text-purple-600 mr-3" />
+                  <MessageCircle className="h-6 w-6 text-purple-600 mr-3" />
                   Personal Messages
                 </CardTitle>
               </CardHeader>

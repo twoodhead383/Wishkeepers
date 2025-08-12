@@ -13,7 +13,7 @@
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
+  --primary: hsl(218, 89%, 34%);
   --primary-foreground: hsl(211, 100%, 99%);
   --secondary: hsl(60, 4.8%, 95.9%);
   --secondary-foreground: hsl(24, 9.8%, 10%);
@@ -25,8 +25,11 @@
   --radius: 0.5rem;
   
   /* Custom Wishkeepers colors */
-  --trust-blue: hsl(207, 90%, 54%);
-  --warm-green: hsl(158, 89%, 40%);
+  --wishkeepers-blue: hsl(218, 89%, 34%); /* Deep blue from logo */
+  --wishkeepers-purple: hsl(295, 54%, 64%); /* Purple from lotus */
+  --wishkeepers-magenta: hsl(320, 64%, 74%); /* Light magenta from petals */
+  --trust-blue: hsl(218, 89%, 34%);
+  --warm-purple: hsl(295, 54%, 64%);
   --soft-gray: hsl(210, 40%, 98%);
   --text-dark: hsl(213, 17%, 23%);
 }
@@ -42,7 +45,7 @@
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(240, 3.7%, 15.9%);
   --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
+  --primary: hsl(218, 89%, 34%);
   --primary-foreground: hsl(211, 100%, 99%);
   --secondary: hsl(240, 3.7%, 15.9%);
   --secondary-foreground: hsl(0, 0%, 98%);
@@ -70,8 +73,20 @@
     color: var(--trust-blue);
   }
   
-  .warm-green {
-    color: var(--warm-green);
+  .warm-purple {
+    color: var(--warm-purple);
+  }
+  
+  .wishkeepers-blue {
+    color: var(--wishkeepers-blue);
+  }
+  
+  .wishkeepers-purple {
+    color: var(--wishkeepers-purple);
+  }
+  
+  .wishkeepers-magenta {
+    color: var(--wishkeepers-magenta);
   }
   
   .soft-gray {

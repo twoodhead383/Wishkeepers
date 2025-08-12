@@ -1,17 +1,17 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Shield, Heart, Users, Lock, FileText, Gift, Clock, CheckCircle, Eye, UserCheck, Scroll } from "lucide-react";
+import { Shield, Users, Lock, FileText, Gift, Clock, CheckCircle, Eye, UserCheck, Scroll } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="bg-gradient-to-br from-white to-blue-50 py-16 lg:py-24">
+    <section className="bg-gradient-to-br from-white via-purple-50 to-blue-50 py-16 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
           <div className="mb-12 lg:mb-0">
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Protect Your Legacy.<br />
-              <span className="text-blue-600">Peace of Mind</span> for Your Loved Ones.
+              <span className="text-primary">Peace of Mind</span> for Your Loved Ones.
             </h1>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
               Securely store your important information, funeral wishes, and personal messages. 
@@ -19,7 +19,7 @@ export function HeroSection() {
             </p>
             <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex">
               <Link href="/register">
-                <Button className="w-full sm:w-auto bg-blue-600 text-white px-8 py-3 text-lg hover:bg-blue-700">
+                <Button className="w-full sm:w-auto bg-primary text-white px-8 py-3 text-lg hover:bg-primary/90">
                   Create Your Vault
                 </Button>
               </Link>
@@ -55,7 +55,7 @@ export function HeroSection() {
                         </div>
                         <div className="bg-green-50 p-4 rounded-lg">
                           <div className="flex items-start gap-3">
-                            <Heart className="h-5 w-5 text-green-600 mt-0.5" />
+                            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                             <div>
                               <h4 className="font-semibold text-green-900">Reduces Family Stress</h4>
                               <p className="text-sm text-green-700">Clear instructions and personal messages provide comfort and guidance when they need it most.</p>

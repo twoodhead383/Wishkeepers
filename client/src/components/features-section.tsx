@@ -1,4 +1,4 @@
-import { Shield, Users, Heart } from "lucide-react";
+import { Shield, Users, Gift } from "lucide-react";
 
 export function FeaturesSection() {
   const features = [
@@ -17,7 +17,7 @@ export function FeaturesSection() {
       bgColor: "bg-green-50"
     },
     {
-      icon: Heart,
+      icon: Gift,
       title: "Personal Messages",
       description: "Leave heartfelt messages and special instructions for your loved ones.",
       color: "text-purple-600",

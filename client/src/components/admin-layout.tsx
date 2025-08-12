@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Heart, BarChart3, Users, Building2, LogOut } from "lucide-react";
+import { BarChart3, Users, Building2, LogOut } from "lucide-react";
+import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -62,8 +63,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex flex-col flex-grow pt-5 bg-white overflow-y-auto border-r border-gray-200">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0 px-4">
-            <Heart className="h-8 w-8 text-blue-600 mr-3" />
-            <span className="text-xl font-semibold text-gray-900">Wishkeepers</span>
+            <img 
+              src={logoImage} 
+              alt="Wishkeepers" 
+              className="h-10 w-auto"
+            />
           </div>
           
           {/* Admin Badge */}

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight, Heart, Plus, X, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Gift, Plus, X, Sparkles } from "lucide-react";
 
 interface FuneralWizardProps {
   initialData?: FuneralData;
@@ -179,7 +179,7 @@ export function FuneralWizard({ initialData, onSave, onCancel }: FuneralWizardPr
       content: (
         <div className="space-y-6">
           <div className="text-center text-gray-600 mb-6">
-            <Heart className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+            <Gift className="h-8 w-8 mx-auto mb-2 text-blue-500" />
             <p>This can feel hard to think about. Just share what feels right for you.</p>
           </div>
           
@@ -528,7 +528,7 @@ export function FuneralWizard({ initialData, onSave, onCancel }: FuneralWizardPr
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Heart className="h-5 w-5 text-blue-500" />
+              <Gift className="h-5 w-5 text-blue-500" />
               Funeral Wishes Wizard
             </CardTitle>
             <p className="text-sm text-gray-600 mt-1">

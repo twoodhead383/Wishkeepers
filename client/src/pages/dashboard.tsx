@@ -9,7 +9,7 @@ import {
   Church, 
   Umbrella, 
   Building, 
-  Heart, 
+  MessageCircle, 
   Gift, 
   Users, 
   CheckCircle,
@@ -61,7 +61,7 @@ export default function Dashboard() {
     {
       id: "messages",
       title: "Personal Messages",
-      icon: Heart,
+      icon: MessageCircle,
       color: "purple",
       completed: !!vault?.personalMessages,
       description: "Heartfelt notes for family and friends.",

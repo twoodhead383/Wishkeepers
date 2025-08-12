@@ -2,9 +2,10 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Heart, Menu, X, Shield, HelpCircle, CheckCircle, Lock, Eye, UserCheck, Phone, Mail, MessageCircle, FileText, Users, Clock, Gift } from "lucide-react";
+import { Menu, X, Shield, HelpCircle, CheckCircle, Lock, Eye, UserCheck, Phone, Mail, MessageCircle, FileText, Users, Clock, Gift } from "lucide-react";
 import { useState } from "react";
 import { ChatWidget } from "@/components/chat-widget";
+import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
 
 export function Navigation() {
   const { user, logout, isAuthenticated } = useAuth();
@@ -24,8 +25,11 @@ export function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <Heart className="h-8 w-8 text-blue-600 mr-3" />
-              <span className="text-xl font-semibold text-gray-900">Wishkeepers</span>
+              <img 
+                src={logoImage} 
+                alt="Wishkeepers" 
+                className="h-10 w-auto"
+              />
             </Link>
           </div>
 
@@ -36,17 +40,17 @@ export function Navigation() {
                 {!user?.isAdmin && (
                   <>
                     <Link href="/dashboard">
-                      <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/dashboard') ? 'text-blue-600 font-medium' : ''}`}>
+                      <span className={`text-gray-600 hover:text-primary transition-colors ${isActive('/dashboard') ? 'text-primary font-medium' : ''}`}>
                         Dashboard
                       </span>
                     </Link>
                     <Link href="/vault">
-                      <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/vault') ? 'text-blue-600 font-medium' : ''}`}>
+                      <span className={`text-gray-600 hover:text-primary transition-colors ${isActive('/vault') ? 'text-primary font-medium' : ''}`}>
                         My Vault
                       </span>
                     </Link>
                     <Link href="/trusted-contacts">
-                      <span className={`text-gray-600 hover:text-blue-600 transition-colors ${isActive('/trusted-contacts') ? 'text-blue-600 font-medium' : ''}`}>
+                      <span className={`text-gray-600 hover:text-primary transition-colors ${isActive('/trusted-contacts') ? 'text-primary font-medium' : ''}`}>
                         Trusted Contacts
                       </span>
                     </Link>
@@ -54,7 +58,7 @@ export function Navigation() {
                 )}
                 {user?.isAdmin && (
                   <Link href="/admin">
-                    <span className={`text-gray-600 hover:text-blue-600 transition-colors ${location.startsWith('/admin') ? 'text-blue-600 font-medium' : ''}`}>
+                    <span className={`text-gray-600 hover:text-primary transition-colors ${location.startsWith('/admin') ? 'text-primary font-medium' : ''}`}>
                       Admin Dashboard
                     </span>
                   </Link>
@@ -103,7 +107,7 @@ export function Navigation() {
                         
                         <div className="text-center p-6 bg-purple-50 rounded-xl">
                           <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Heart className="h-8 w-8 text-purple-600" />
+                            <Users className="h-8 w-8 text-purple-600" />
                           </div>
                           <h3 className="text-xl font-semibold text-gray-900 mb-3">3. Nominate Trusted Contacts</h3>
                           <p className="text-gray-600">Invite family members or friends who can request access to your vault when needed.</p>
@@ -116,7 +120,7 @@ export function Navigation() {
                         <div className="grid md:grid-cols-2 gap-4">
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Heart className="h-4 w-4 text-red-500" />
+                              <Gift className="h-4 w-4 text-red-500" />
                               Funeral Wishes & Personal Messages
                             </h4>
                             <p className="text-sm text-gray-600">Your preferences for services, personal items to gift, and heartfelt messages for loved ones.</p>
