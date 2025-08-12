@@ -1,32 +1,55 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Shield, Users, Lock, FileText, Gift, Clock, CheckCircle, Eye, UserCheck, Scroll } from "lucide-react";
+import { Shield, Users, Lock, FileText, Gift, Clock, CheckCircle, Eye, UserCheck, Scroll, ChevronDown } from "lucide-react";
+import familyImage from "@assets/family-happy-kids-hug-with-funny-quality-time-with-smile-elderly-people-portrait-senior-grandparents-parents-children-laughing-with-happiness-love-care-together-smiling_1755002269825.jpg";
 
 export function HeroSection() {
   return (
-    <section className="bg-gradient-to-br from-white via-purple-50 to-blue-50 py-16 lg:py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 py-20 lg:py-32 overflow-hidden">
+      {/* Wave overlay effect */}
+      <div className="absolute inset-0 opacity-10">
+        <svg
+          className="absolute top-0 left-0 w-full h-full"
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+          fill="none"
+        >
+          <path
+            d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,181.3C960,181,1056,139,1152,128C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+            fill="currentColor"
+            className="text-white"
+          />
+          <path
+            d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            fill="currentColor"
+            className="text-white opacity-50"
+          />
+        </svg>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
-          <div className="mb-12 lg:mb-0">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Protect Your Legacy.<br />
-              <span className="text-primary">Peace of Mind</span> for Your Loved Ones.
+          <div className="mb-12 lg:mb-0 text-white">
+            <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+              Welcome to<br />
+              WishKeepers
             </h1>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Securely store your important information, funeral wishes, and personal messages. 
-              Ensure your family has everything they need when the time comes.
+            <p className="text-xl lg:text-2xl text-orange-300 mb-8 leading-relaxed">
+              Helping you and your loved ones<br />
+              with your end of life wishes.
             </p>
             <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex">
               <Link href="/register">
-                <Button className="w-full sm:w-auto bg-primary text-white px-8 py-3 text-lg hover:bg-primary/90">
-                  Create Your Vault
+                <Button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg rounded-full">
+                  Let's Begin
                 </Button>
               </Link>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full sm:w-auto px-8 py-3 text-lg">
-                    Learn More
+                  <Button variant="ghost" className="w-full sm:w-auto px-8 py-3 text-lg text-white hover:bg-white/10 flex items-center gap-2">
+                    Learn more
+                    <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
@@ -165,21 +188,44 @@ export function HeroSection() {
               </Dialog>
             </div>
           </div>
-          <div className="relative">
-            <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-2xl shadow-xl p-16 flex items-center justify-center h-96">
-              <svg
-                className="w-48 h-48 text-blue-600"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" opacity="0.3"/>
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.11V11c0 4.52-2.98 8.69-7 9.93-4.02-1.24-7-5.41-7-9.93V6.29l7-3.11z"/>
-                <circle cx="12" cy="11" r="2"/>
-                <path d="M12 8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zm0 4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
-              </svg>
+          
+          {/* Family Image with Grid Overlay Effect */}
+          <div className="relative lg:flex lg:justify-end">
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto lg:mx-0">
+                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
+                  <img 
+                    src={familyImage} 
+                    alt="Happy family with multiple generations" 
+                    className="w-full h-32 object-cover object-center"
+                  />
+                </div>
+                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
+                  <img 
+                    src={familyImage} 
+                    alt="Happy family with multiple generations" 
+                    className="w-full h-32 object-cover object-left"
+                  />
+                </div>
+                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
+                  <img 
+                    src={familyImage} 
+                    alt="Happy family with multiple generations" 
+                    className="w-full h-32 object-cover object-right"
+                  />
+                </div>
+                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
+                  <img 
+                    src={familyImage} 
+                    alt="Happy family with multiple generations" 
+                    className="w-full h-32 object-cover object-bottom"
+                  />
+                </div>
+              </div>
+              
+              {/* Overlay effect */}
+              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 via-transparent to-white/10 rounded-lg pointer-events-none"></div>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/10 to-transparent rounded-2xl"></div>
           </div>
         </div>
       </div>
