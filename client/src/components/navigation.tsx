@@ -8,7 +8,7 @@ import { ChatWidget } from "@/components/chat-widget";
 import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
 
 export function Navigation() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, isLoading } = useAuth();
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -35,7 +35,12 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {isAuthenticated ? (
+            {isLoading ? (
+              <div className="flex items-center space-x-4">
+                <div className="h-8 w-20 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-8 w-16 bg-gray-200 animate-pulse rounded"></div>
+              </div>
+            ) : isAuthenticated ? (
               <>
                 {!user?.isAdmin && (
                   <>
@@ -371,7 +376,11 @@ export function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-100">
-              {isAuthenticated ? (
+              {isLoading ? (
+                <div className="px-3 py-2">
+                  <div className="h-6 w-24 bg-gray-200 animate-pulse rounded"></div>
+                </div>
+              ) : isAuthenticated ? (
                 <>
                   {!user?.isAdmin && (
                     <>
