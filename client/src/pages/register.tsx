@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
 
 export default function Register() {
   const { register, isRegisterPending, registerError, isAuthenticated } = useAuth();
@@ -47,6 +48,13 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
+            <div className="flex justify-center mb-6">
+              <img 
+                src={logoImage} 
+                alt="Wishkeepers" 
+                className="h-12 w-auto"
+              />
+            </div>
             <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
               Create Your Account
             </CardTitle>
