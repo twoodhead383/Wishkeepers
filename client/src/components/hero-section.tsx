@@ -189,42 +189,31 @@ export function HeroSection() {
             </div>
           </div>
           
-          {/* Family Image with Grid Overlay Effect */}
+          {/* Family Image with Overlay Effect */}
           <div className="relative lg:flex lg:justify-end">
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto lg:mx-0">
-                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
-                  <img 
-                    src={familyImage} 
-                    alt="Happy family with multiple generations" 
-                    className="w-full h-32 object-cover object-center"
-                  />
+            <div className="relative max-w-sm mx-auto lg:mx-0">
+              {/* Main family image */}
+              <div className="relative overflow-hidden rounded-3xl bg-white/20 backdrop-blur-sm p-1">
+                <img 
+                  src={familyImage} 
+                  alt="Happy family with multiple generations" 
+                  className="w-full h-80 object-cover rounded-2xl"
+                />
+                
+                {/* Overlay grid lines effect */}
+                <div className="absolute inset-1 rounded-2xl pointer-events-none">
+                  {/* Vertical line */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-white/30 transform -translate-x-px"></div>
+                  {/* Horizontal line */}
+                  <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/30 transform -translate-y-px"></div>
                 </div>
-                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
-                  <img 
-                    src={familyImage} 
-                    alt="Happy family with multiple generations" 
-                    className="w-full h-32 object-cover object-left"
-                  />
-                </div>
-                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
-                  <img 
-                    src={familyImage} 
-                    alt="Happy family with multiple generations" 
-                    className="w-full h-32 object-cover object-right"
-                  />
-                </div>
-                <div className="bg-white/20 rounded-lg overflow-hidden backdrop-blur-sm">
-                  <img 
-                    src={familyImage} 
-                    alt="Happy family with multiple generations" 
-                    className="w-full h-32 object-cover object-bottom"
-                  />
-                </div>
+                
+                {/* Corner accent overlays */}
+                <div className="absolute top-1 left-1 w-16 h-16 bg-white/10 rounded-br-3xl"></div>
+                <div className="absolute top-1 right-1 w-16 h-16 bg-white/10 rounded-bl-3xl"></div>
+                <div className="absolute bottom-1 left-1 w-16 h-16 bg-white/10 rounded-tr-3xl"></div>
+                <div className="absolute bottom-1 right-1 w-16 h-16 bg-white/10 rounded-tl-3xl"></div>
               </div>
-              
-              {/* Overlay effect */}
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 via-transparent to-white/10 rounded-lg pointer-events-none"></div>
             </div>
           </div>
         </div>
