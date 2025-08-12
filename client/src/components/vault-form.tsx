@@ -28,12 +28,12 @@ export function VaultForm({ initialData, onSuccess }: VaultFormProps) {
   const form = useForm<InsertVault>({
     resolver: zodResolver(insertVaultSchema),
     defaultValues: {
-      funeralWishes: initialData?.funeralWishes || null,
+      funeralWishes: initialData?.funeralWishes || "",
       funeralData: initialData?.funeralData || undefined,
-      lifeInsurance: initialData?.lifeInsurance || null,
-      banking: initialData?.banking || null,
-      personalMessages: initialData?.personalMessages || null,
-      specialRequests: initialData?.specialRequests || null,
+      lifeInsurance: initialData?.lifeInsurance || "",
+      banking: initialData?.banking || "",
+      personalMessages: initialData?.personalMessages || "",
+      specialRequests: initialData?.specialRequests || "",
     },
   });
 

@@ -150,12 +150,12 @@ export class DatabaseStorage implements IStorage {
     // Encrypt sensitive fields
     const encryptedData = {
       ...vaultData,
-      funeralWishes: vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : null,
+      funeralWishes: vaultData.funeralWishes && vaultData.funeralWishes.trim() ? encryptField(vaultData.funeralWishes) : null,
       funeralData: vaultData.funeralData ? JSON.stringify(vaultData.funeralData) : null,
-      lifeInsurance: vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : null,
-      banking: vaultData.banking ? encryptField(vaultData.banking) : null,
-      personalMessages: vaultData.personalMessages ? encryptField(vaultData.personalMessages) : null,
-      specialRequests: vaultData.specialRequests ? encryptField(vaultData.specialRequests) : null,
+      lifeInsurance: vaultData.lifeInsurance && vaultData.lifeInsurance.trim() ? encryptField(vaultData.lifeInsurance) : null,
+      banking: vaultData.banking && vaultData.banking.trim() ? encryptField(vaultData.banking) : null,
+      personalMessages: vaultData.personalMessages && vaultData.personalMessages.trim() ? encryptField(vaultData.personalMessages) : null,
+      specialRequests: vaultData.specialRequests && vaultData.specialRequests.trim() ? encryptField(vaultData.specialRequests) : null,
       isComplete: false,
       completionPercentage: this.calculateCompletionPercentage(vaultData),
     };
@@ -165,7 +165,9 @@ export class DatabaseStorage implements IStorage {
       .values(encryptedData)
       .returning();
     
-    return this.getVault(vault.id)!;
+    const result = await this.getVault(vault.id);
+    if (!result) throw new Error('Failed to retrieve created vault');
+    return result;
   }
 
   async updateVault(id: string, vaultData: Partial<InsertVault>): Promise<Vault | undefined> {
@@ -176,22 +178,22 @@ export class DatabaseStorage implements IStorage {
     const updates: any = {
       ...vaultData,
       funeralWishes: vaultData.funeralWishes !== undefined ? 
-        (vaultData.funeralWishes ? encryptField(vaultData.funeralWishes) : null) : 
+        (vaultData.funeralWishes && vaultData.funeralWishes.trim() ? encryptField(vaultData.funeralWishes) : null) : 
         existing.funeralWishes,
       funeralData: vaultData.funeralData !== undefined ? 
         (vaultData.funeralData ? JSON.stringify(vaultData.funeralData) : null) : 
         existing.funeralData,
       lifeInsurance: vaultData.lifeInsurance !== undefined ? 
-        (vaultData.lifeInsurance ? encryptField(vaultData.lifeInsurance) : null) : 
+        (vaultData.lifeInsurance && vaultData.lifeInsurance.trim() ? encryptField(vaultData.lifeInsurance) : null) : 
         existing.lifeInsurance,
       banking: vaultData.banking !== undefined ? 
-        (vaultData.banking ? encryptField(vaultData.banking) : null) : 
+        (vaultData.banking && vaultData.banking.trim() ? encryptField(vaultData.banking) : null) : 
         existing.banking,
       personalMessages: vaultData.personalMessages !== undefined ? 
-        (vaultData.personalMessages ? encryptField(vaultData.personalMessages) : null) : 
+        (vaultData.personalMessages && vaultData.personalMessages.trim() ? encryptField(vaultData.personalMessages) : null) : 
         existing.personalMessages,
       specialRequests: vaultData.specialRequests !== undefined ? 
-        (vaultData.specialRequests ? encryptField(vaultData.specialRequests) : null) : 
+        (vaultData.specialRequests && vaultData.specialRequests.trim() ? encryptField(vaultData.specialRequests) : null) : 
         existing.specialRequests,
       updatedAt: new Date(),
     };

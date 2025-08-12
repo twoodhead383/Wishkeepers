@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, boolean, integer, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { nanoid } from "nanoid";
 
 // Users table
 export const users = pgTable("users", {
@@ -101,12 +102,12 @@ export const insertVaultSchema = createInsertSchema(vaults).omit({
   isComplete: true,
   completionPercentage: true,
 }).extend({
-  funeralWishes: z.string().nullable().optional(),
+  funeralWishes: z.string().optional(),
   funeralData: funeralDataSchema.optional(),
-  lifeInsurance: z.string().nullable().optional(),
-  banking: z.string().nullable().optional(),
-  personalMessages: z.string().nullable().optional(),
-  specialRequests: z.string().nullable().optional(),
+  lifeInsurance: z.string().optional(),
+  banking: z.string().optional(),
+  personalMessages: z.string().optional(),
+  specialRequests: z.string().optional(),
 });
 
 export const insertTrustedContactSchema = createInsertSchema(trustedContacts).omit({
