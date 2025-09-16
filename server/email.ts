@@ -81,17 +81,17 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
     const graphClient = await getGraphClient();
     console.log('✅ Microsoft Graph client obtained successfully');
     
-    // For application permissions, we need to get a valid user from the organization
-    // First, try to get the first available user from the organization
-    console.log('👥 Fetching organization users...');
-    const users = await graphClient.api('/users').top(1).get();
+    // For application permissions, we need to get a specific user from the organization
+    // Always use hello@wishkeepers.com for consistent DKIM signing
+    console.log('👥 Looking up specific sender user: hello@wishkeepers.com');
+    const fromUser = await graphClient.api('/users/hello@wishkeepers.com').get();
     
-    if (!users || !users.value || users.value.length === 0) {
-      throw new Error('No users found in the organization to send email from');
+    if (!fromUser) {
+      throw new Error('Sender user hello@wishkeepers.com not found in organization');
     }
     
-    const fromUser = users.value[0];
     console.log('✅ Found sender user:', fromUser.userPrincipalName);
+    console.log('   Sender User ID:', fromUser.id);
     
     const sendMail = {
       message: {
