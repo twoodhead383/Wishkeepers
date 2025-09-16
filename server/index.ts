@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+// import rateLimit from "express-rate-limit"; // Temporarily disabled
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -27,39 +27,8 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
-// Rate limiting - skip X-Forwarded-For validation in development
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: {
-    error: "Too many requests from this IP, please try again later."
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: {
-    xForwardedForHeader: false, // Disable validation for development
-  }
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes  
-  max: process.env.NODE_ENV === 'production' ? 5 : 50, // More lenient in development
-  message: {
-    error: "Too many authentication attempts, please try again later."
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: {
-    xForwardedForHeader: false, // Disable validation for development
-  }
-});
-
-// Apply rate limiting only in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(limiter);
-  app.use('/api/login', authLimiter);
-  app.use('/api/register', authLimiter);
-}
+// Rate limiting temporarily disabled for development
+// Will re-enable after login issues are resolved
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
