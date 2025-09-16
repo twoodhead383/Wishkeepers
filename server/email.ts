@@ -135,6 +135,101 @@ export async function sendTrustedContactInvite(
   }
 }
 
+export async function sendWelcomeEmail(email: string, firstName: string, lastName: string) {
+  const dashboardUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/dashboard`;
+  
+  const htmlContent = `
+    <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      <!-- Header with branding -->
+      <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
+          Welcome to Wishkeepers
+        </h1>
+        <p style="color: #e8f4ff; margin: 8px 0 0; font-size: 16px; opacity: 0.9;">
+          Your Digital Legacy Vault
+        </p>
+      </div>
+      
+      <!-- Main content -->
+      <div style="padding: 40px 30px; background-color: #ffffff;">
+        <h2 style="color: #1f2937; margin: 0 0 20px; font-size: 24px; font-weight: 600;">
+          Hello ${firstName}! 👋
+        </h2>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 0 0 24px; font-size: 16px;">
+          Thank you for joining Wishkeepers. You've taken an important step in preparing for life's most significant moments and ensuring your loved ones have access to the information they need when it matters most.
+        </p>
+        
+        <!-- Feature highlights -->
+        <div style="background-color: #f8fafc; border-radius: 8px; padding: 24px; margin: 24px 0;">
+          <h3 style="color: #2563eb; margin: 0 0 16px; font-size: 18px; font-weight: 600;">
+            What you can do with Wishkeepers:
+          </h3>
+          <ul style="color: #4b5563; line-height: 1.6; margin: 0; padding-left: 20px;">
+            <li style="margin-bottom: 8px;"><strong>🔒 Store Legacy Information</strong> - Securely save funeral wishes, insurance details, and banking information</li>
+            <li style="margin-bottom: 8px;"><strong>👥 Nominate Trusted Contacts</strong> - Choose people who can access your information when needed</li>
+            <li style="margin-bottom: 8px;"><strong>💝 Personal Messages</strong> - Leave heartfelt messages for your loved ones</li>
+            <li style="margin-bottom: 0;"><strong>🛡️ Bank-Level Security</strong> - Your data is encrypted with AES-256 encryption</li>
+          </ul>
+        </div>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 24px 0; font-size: 16px;">
+          Ready to get started? Your vault is waiting for you, and it only takes a few minutes to set up the essentials.
+        </p>
+        
+        <!-- Call to action button -->
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${dashboardUrl}" style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); transition: all 0.2s ease;">
+            Set Up Your Vault
+          </a>
+        </div>
+        
+        <!-- Additional info -->
+        <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
+          <p style="color: #6b7280; line-height: 1.6; margin: 0 0 16px; font-size: 14px;">
+            <strong>Need help?</strong> Our support team is here to assist you every step of the way. Simply reply to this email or contact us through your dashboard.
+          </p>
+          <p style="color: #6b7280; line-height: 1.6; margin: 0; font-size: 14px;">
+            Thank you for trusting Wishkeepers with your digital legacy.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">
+          Best regards,<br>
+          <strong style="color: #2563eb;">The Wishkeepers Team</strong>
+        </p>
+        <p style="color: #9ca3af; margin: 16px 0 0; font-size: 12px;">
+          This email was sent to ${email}. You received this because you created a Wishkeepers account.
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await sendEmail(
+      email,
+      `Welcome to Wishkeepers, ${firstName}! Your digital legacy vault awaits`,
+      htmlContent
+    );
+    console.log('✅ Welcome email sent successfully to:', email);
+  } catch (error) {
+    console.error('❌ Failed to send welcome email via Microsoft Graph:', error);
+    
+    // Log welcome details for manual follow-up
+    console.log('📧 WELCOME EMAIL DETAILS (for manual sending):');
+    console.log(`   To: ${email}`);
+    console.log(`   User: ${firstName} ${lastName}`);
+    console.log(`   Dashboard URL: ${dashboardUrl}`);
+    console.log('   Note: Configure Microsoft Graph permissions if needed');
+    
+    // Don't throw error - registration was successful, just email failed
+    console.log('⚠️  User registered successfully but welcome email not sent.');
+  }
+}
+
 export async function sendVaultCompletionReminder(email: string, firstName: string) {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

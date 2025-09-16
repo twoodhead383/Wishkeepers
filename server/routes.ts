@@ -58,6 +58,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.session.userId = user.id;
       req.session.isAdmin = user.isAdmin || false;
       
+      // Send welcome email
+      try {
+        const { sendWelcomeEmail } = await import('./email');
+        await sendWelcomeEmail(user.email, user.firstName, user.lastName);
+      } catch (emailError) {
+        console.error('Failed to send welcome email:', emailError);
+        // Don't fail registration if email fails
+      }
+      
       res.json({ 
         user: { 
           id: user.id, 
