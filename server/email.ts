@@ -40,10 +40,30 @@ async function getGraphClient(): Promise<Client> {
 // Send email using Microsoft Graph API
 async function sendEmail(to: string, subject: string, htmlContent: string): Promise<void> {
   try {
+    console.log('🚀 Starting email send process');
+    console.log('   To:', to);
+    console.log('   Subject:', subject);
+    
+    // Check environment variables first
+    const tenantId = process.env.MICROSOFT_TENANT_ID;
+    const clientId = process.env.MICROSOFT_CLIENT_ID;
+    const clientSecret = process.env.MICROSOFT_CLIENT_SECRET;
+    
+    console.log('🔑 Microsoft Graph Configuration:');
+    console.log('   Tenant ID:', tenantId ? `${tenantId.substring(0, 8)}...` : 'MISSING');
+    console.log('   Client ID:', clientId ? `${clientId.substring(0, 8)}...` : 'MISSING');
+    console.log('   Client Secret:', clientSecret ? '[PRESENT]' : 'MISSING');
+    
+    if (!tenantId || !clientId || !clientSecret) {
+      throw new Error('Missing required Microsoft Graph environment variables');
+    }
+    
     const graphClient = await getGraphClient();
+    console.log('✅ Microsoft Graph client obtained successfully');
     
     // For application permissions, we need to get a valid user from the organization
     // First, try to get the first available user from the organization
+    console.log('👥 Fetching organization users...');
     const users = await graphClient.api('/users').top(1).get();
     
     if (!users || !users.value || users.value.length === 0) {
@@ -51,7 +71,7 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
     }
     
     const fromUser = users.value[0];
-    console.log('Sending email from user:', fromUser.userPrincipalName);
+    console.log('✅ Found sender user:', fromUser.userPrincipalName);
     
     const sendMail = {
       message: {
