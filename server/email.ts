@@ -15,6 +15,7 @@ const cca = new ConfidentialClientApplication(msalConfig);
 // Microsoft Graph client with app-only authentication
 async function getGraphClient(): Promise<Client> {
   try {
+    console.log('🔐 Acquiring Microsoft Graph access token...');
     const clientCredentialRequest = {
       scopes: ['https://graph.microsoft.com/.default'],
     };
@@ -26,13 +27,32 @@ async function getGraphClient(): Promise<Client> {
       throw new Error('Failed to acquire access token from Microsoft Graph');
     }
     
+    console.log('✅ Access token acquired successfully');
+    console.log('   Token type:', authResponse.tokenType);
+    console.log('   Expires in:', authResponse.expiresOn);
+    console.log('   Scopes:', authResponse.scopes?.join(', ') || 'No scopes returned');
+    
     return Client.init({
       authProvider: (done) => {
         done(null, authResponse.accessToken);
       }
     });
   } catch (error) {
-    console.error('Error getting Graph client:', error);
+    console.error('❌ Error getting Graph client:', error);
+    
+    // Enhanced error logging for troubleshooting
+    if (error && typeof error === 'object') {
+      if ('errorCode' in error) {
+        console.error('   Error Code:', (error as any).errorCode);
+      }
+      if ('errorMessage' in error) {
+        console.error('   Error Message:', (error as any).errorMessage);  
+      }
+      if ('subError' in error) {
+        console.error('   Sub Error:', (error as any).subError);
+      }
+    }
+    
     throw error;
   }
 }
@@ -98,9 +118,16 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
     };
 
     // Send email using a valid user from the tenant
-    await graphClient.api(`/users/${fromUser.id}/sendMail`).post(sendMail);
+    console.log('📤 Sending email via Microsoft Graph API...');
+    console.log('   From User ID:', fromUser.id);
+    console.log('   From User Email:', fromUser.userPrincipalName);
+    console.log('   To:', to);
+    console.log('   Subject:', subject);
     
-    console.log('Email sent successfully via Microsoft Graph to:', to, 'from:', fromUser.userPrincipalName);
+    const response = await graphClient.api(`/users/${fromUser.id}/sendMail`).post(sendMail);
+    
+    console.log('✅ Microsoft Graph API Response:', response);
+    console.log('✅ Email sent successfully via Microsoft Graph to:', to, 'from:', fromUser.userPrincipalName);
   } catch (error) {
     console.error('Error sending email via Microsoft Graph:', error);
     console.error('Full error details:', JSON.stringify(error, null, 2));
