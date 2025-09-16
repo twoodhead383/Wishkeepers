@@ -220,6 +220,11 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(trustedContacts).where(eq(trustedContacts.vaultId, vaultId));
   }
 
+  async getTrustedContact(contactId: string): Promise<TrustedContact | undefined> {
+    const [contact] = await db.select().from(trustedContacts).where(eq(trustedContacts.id, contactId)).limit(1);
+    return contact || undefined;
+  }
+
   async getTrustedContactByToken(token: string): Promise<TrustedContact | undefined> {
     const [contact] = await db.select().from(trustedContacts).where(eq(trustedContacts.inviteToken, token));
     return contact || undefined;

@@ -261,6 +261,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ contact: updated });
   });
 
+  // Resend trusted contact invitation
+  app.post('/api/trusted-contacts/:id/resend', requireAuth, async (req, res) => {
+    try {
+      const contactId = req.params.id;
+      
+      // Get the trusted contact
+      const contact = await storage.getTrustedContact(contactId);
+      if (!contact) {
+        return res.status(404).json({ message: 'Trusted contact not found' });
+      }
+      
+      // Verify the contact belongs to the current user's vault
+      const vault = await storage.getVaultByUserId(req.session.userId!);
+      if (!vault || contact.vaultId !== vault.id) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+      
+      // Only resend for pending contacts
+      if (contact.status !== 'pending') {
+        return res.status(400).json({ message: 'Can only resend invitations for pending contacts' });
+      }
+      
+      // Get user info for the email
+      const user = await storage.getUser(req.session.userId!);
+      if (user) {
+        try {
+          const { sendTrustedContactInvite } = await import('./email');
+          await sendTrustedContactInvite(
+            contact.contactEmail,
+            contact.contactName,
+            `${user.firstName} ${user.lastName}`,
+            contact.inviteToken!
+          );
+          console.log('📧 Resent invitation to:', contact.contactEmail);
+        } catch (emailError) {
+          console.error('❌ Failed to resend invite email:', emailError);
+          return res.status(500).json({ message: 'Failed to send invitation email' });
+        }
+      }
+      
+      res.json({ message: 'Invitation resent successfully' });
+    } catch (error) {
+      console.error('Error resending invitation:', error);
+      res.status(500).json({ message: 'Failed to resend invitation' });
+    }
+  });
+
   // Data release request routes
   app.post('/api/data-release-request', requireAuth, async (req, res) => {
     try {

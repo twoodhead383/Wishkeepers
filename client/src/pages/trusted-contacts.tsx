@@ -43,6 +43,31 @@ export default function TrustedContacts() {
     },
   });
 
+  const resendInviteMutation = useMutation({
+    mutationFn: (contactId: string) => 
+      fetch(`/api/trusted-contacts/${contactId}/resend`, {
+        method: 'POST',
+        credentials: 'include',
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to resend invitation');
+        return res.json();
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/trusted-contacts"] });
+      toast({
+        title: "Invitation resent",
+        description: "The invitation has been sent again successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to resend invitation. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const form = useForm<InsertTrustedContact>({
     resolver: zodResolver(insertTrustedContactSchema),
     defaultValues: {
@@ -142,8 +167,15 @@ export default function TrustedContacts() {
                       </div>
                       <div className="flex space-x-2">
                         {contact.status === "pending" && (
-                          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-                            Resend Invite
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-blue-600 hover:text-blue-700"
+                            onClick={() => resendInviteMutation.mutate(contact.id)}
+                            disabled={resendInviteMutation.isPending}
+                            data-testid={`button-resend-${contact.id}`}
+                          >
+                            {resendInviteMutation.isPending ? "Sending..." : "Resend Invite"}
                           </Button>
                         )}
                         <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">
