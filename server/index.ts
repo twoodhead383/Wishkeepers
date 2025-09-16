@@ -56,9 +56,12 @@ const authLimiter = rateLimit({
   }
 });
 
-app.use(limiter);
-app.use('/api/login', authLimiter);
-app.use('/api/register', authLimiter);
+// Apply rate limiting only in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(limiter);
+  app.use('/api/login', authLimiter);
+  app.use('/api/register', authLimiter);
+}
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
