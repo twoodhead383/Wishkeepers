@@ -198,9 +198,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const contactData = insertTrustedContactSchema.parse(req.body);
       
-      const vault = await storage.getVaultByUserId(req.session.userId!);
+      // Get or create vault for the user
+      let vault = await storage.getVaultByUserId(req.session.userId!);
       if (!vault) {
-        return res.status(400).json({ message: 'No vault found' });
+        // Create an empty vault for the user so they can add trusted contacts
+        vault = await storage.createVault({
+          userId: req.session.userId!,
+          funeralWishes: undefined,
+          funeralData: undefined,
+          lifeInsurance: undefined,
+          banking: undefined,
+          personalMessages: undefined,
+          specialRequests: undefined,
+        });
       }
       
       const contact = await storage.createTrustedContact({
