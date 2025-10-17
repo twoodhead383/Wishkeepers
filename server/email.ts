@@ -303,3 +303,88 @@ export async function sendVaultCompletionReminder(email: string, firstName: stri
     console.error('Error sending reminder email:', error);
   }
 }
+
+export async function sendVerificationCode(email: string, firstName: string, verificationCode: string) {
+  const htmlContent = `
+    <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      <!-- Header with branding -->
+      <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
+          Verify Your Email
+        </h1>
+        <p style="color: #e8f4ff; margin: 8px 0 0; font-size: 16px; opacity: 0.9;">
+          Wishkeepers Account Verification
+        </p>
+      </div>
+      
+      <!-- Main content -->
+      <div style="padding: 40px 30px; background-color: #ffffff;">
+        <h2 style="color: #1f2937; margin: 0 0 20px; font-size: 24px; font-weight: 600;">
+          Hello ${firstName}! 👋
+        </h2>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 0 0 24px; font-size: 16px;">
+          Thank you for signing up with Wishkeepers. To complete your registration, please verify your email address by entering the code below:
+        </p>
+        
+        <!-- Verification code display -->
+        <div style="background-color: #f8fafc; border: 2px dashed #2563eb; border-radius: 8px; padding: 24px; margin: 24px 0; text-align: center;">
+          <p style="color: #6b7280; margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+            Your Verification Code
+          </p>
+          <div style="background-color: #ffffff; border-radius: 6px; padding: 20px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <span style="font-family: 'Courier New', monospace; font-size: 32px; font-weight: 700; color: #2563eb; letter-spacing: 8px;">
+              ${verificationCode}
+            </span>
+          </div>
+          <p style="color: #6b7280; margin: 12px 0 0; font-size: 14px;">
+            This code expires in 15 minutes
+          </p>
+        </div>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 24px 0; font-size: 16px;">
+          If you didn't create a Wishkeepers account, you can safely ignore this email.
+        </p>
+        
+        <!-- Additional info -->
+        <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
+          <p style="color: #6b7280; line-height: 1.6; margin: 0 0 16px; font-size: 14px;">
+            <strong>Security tip:</strong> Never share this verification code with anyone. Wishkeepers staff will never ask for this code.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background-color: #f9fafb; padding: 24px 30px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">
+          Best regards,<br>
+          <strong style="color: #2563eb;">The Wishkeepers Team</strong>
+        </p>
+        <p style="color: #9ca3af; margin: 16px 0 0; font-size: 12px;">
+          This email was sent to ${email}. You received this because you created a Wishkeepers account.
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await sendEmail(
+      email,
+      `Your Wishkeepers verification code: ${verificationCode}`,
+      htmlContent
+    );
+    console.log('✅ Verification email sent successfully to:', email);
+  } catch (error) {
+    console.error('❌ Failed to send verification email:', error);
+    
+    // Log verification details for manual follow-up
+    console.log('📧 VERIFICATION EMAIL DETAILS (for manual sending):');
+    console.log(`   To: ${email}`);
+    console.log(`   User: ${firstName}`);
+    console.log(`   Verification Code: ${verificationCode}`);
+    console.log('   Note: Configure Microsoft Graph permissions if needed');
+    
+    // Don't throw error - we'll handle this in the route
+    throw error;
+  }
+}
