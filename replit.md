@@ -179,3 +179,24 @@ The application follows a full-stack monorepo architecture with a clear separati
   - Updated registration and login flows to redirect to verification when needed
   - Enhanced email templates with professional verification code display
   - Security patch: Fixed GCM authentication tag validation vulnerability in encryption module
+- **Trusted Contact Invitation and Dashboard System**: Complete implementation of trusted contact user experience
+  - **Invitation Acceptance Flow**: Created /invite/:token page for accepting nominations
+    - Users set password and create account without email verification (invite link validates email ownership)
+    - Backend automatically sets email_verified to true for invited users
+    - Updates trusted contact status to 'confirmed' and establishes user session
+  - **Dual-Mode Dashboard**: Adaptive dashboard based on user's role
+    - "You're a Trusted Contact" section shows people user is nominated for
+    - Quick action buttons: "No Longer Wish to Be Trusted Contact" and "Notify of Passing"
+    - "Create Your Own Vault" section appears for trusted contacts without their own vault
+    - Conditional rendering adapts to whether user owns vault, is trusted contact, or both
+  - **Remove as Trusted Contact**: Self-service removal functionality
+    - Updates contact status to 'denied' in database
+    - Sends automated email notifications to both vault owner and trusted contact
+    - Immediately removes card from dashboard after confirmation
+  - **Death Declaration Workflow**: Formal process for requesting vault access
+    - Modal displays declaration with deceased person's name
+    - Creates data release request with 'pending' status for admin review
+    - Success message explains admin review process
+  - **Schema Fix**: Corrected insertDataReleaseRequestSchema to omit requesterId (backend injects from session)
+  - **Storage Enhancement**: Added getTrustedContactsByEmail method for dashboard queries
+  - **End-to-End Testing**: Playwright tests confirm complete flow from invitation through death declaration
