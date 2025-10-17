@@ -131,6 +131,7 @@ export const insertTrustedContactSchema = createInsertSchema(trustedContacts).om
 
 export const insertDataReleaseRequestSchema = createInsertSchema(dataReleaseRequests).omit({
   id: true,
+  requesterId: true,
   requestDate: true,
   reviewedAt: true,
   reviewedBy: true,
