@@ -34,6 +34,11 @@ export function decryptField(encryptedText: string): string {
     const authTag = Buffer.from(parts[1], 'hex');
     const encrypted = parts[2];
     
+    // Validate auth tag length to prevent tag truncation attacks
+    if (authTag.length !== 16) {
+      throw new Error('Invalid authentication tag length');
+    }
+    
     const decipher = crypto.createDecipheriv(ALGORITHM, SECRET_KEY, iv);
     decipher.setAuthTag(authTag);
     
