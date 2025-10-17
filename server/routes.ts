@@ -89,6 +89,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Verify email with code
+  app.post('/api/verify-email', async (req, res) => {
+    try {
+      const { email, code } = req.body;
+      
+      if (!email || !code) {
+        return res.status(400).json({ message: 'Email and code are required' });
+      }
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      if (user.emailVerified) {
+        return res.status(400).json({ message: 'Email already verified' });
+      }
+      
+      if (!user.verificationCode || !user.verificationCodeExpiry) {
+        return res.status(400).json({ message: 'No verification code found. Please request a new one.' });
+      }
+      
+      // Check if code expired
+      if (new Date() > user.verificationCodeExpiry) {
+        return res.status(400).json({ message: 'Verification code has expired. Please request a new one.' });
+      }
+      
+      // Check if code matches
+      if (user.verificationCode !== code) {
+        return res.status(400).json({ message: 'Invalid verification code' });
+      }
+      
+      // Verify user and clear verification code
+      await storage.updateUser(user.id, {
+        emailVerified: true,
+        verificationCode: null,
+        verificationCodeExpiry: null
+      });
+      
+      // Set session to log them in
+      req.session.userId = user.id;
+      req.session.isAdmin = user.isAdmin || false;
+      
+      // Send welcome email
+      try {
+        const { sendWelcomeEmail } = await import('./email');
+        await sendWelcomeEmail(user.email, user.firstName, user.lastName);
+      } catch (emailError) {
+        console.error('Failed to send welcome email:', emailError);
+        // Don't fail verification if welcome email fails
+      }
+      
+      res.json({ 
+        message: 'Email verified successfully',
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isAdmin: user.isAdmin
+        }
+      });
+    } catch (error) {
+      console.error('Verification error:', error);
+      res.status(500).json({ message: 'Verification failed. Please try again.' });
+    }
+  });
+
+  // Resend verification code
+  app.post('/api/resend-verification', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+      }
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      
+      if (user.emailVerified) {
+        return res.status(400).json({ message: 'Email already verified' });
+      }
+      
+      // Generate new verification code
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const verificationCodeExpiry = new Date(Date.now() + 15 * 60 * 1000);
+      
+      // Update user with new code
+      await storage.updateUser(user.id, {
+        verificationCode,
+        verificationCodeExpiry
+      });
+      
+      // Send verification email
+      try {
+        const { sendVerificationCode } = await import('./email');
+        await sendVerificationCode(user.email, user.firstName, verificationCode);
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        return res.status(500).json({ 
+          message: 'Failed to send verification email. Please try again.' 
+        });
+      }
+      
+      res.json({ 
+        message: 'Verification code sent. Please check your email.'
+      });
+    } catch (error) {
+      console.error('Resend verification error:', error);
+      res.status(500).json({ message: 'Failed to resend code. Please try again.' });
+    }
+  });
+
   app.post('/api/login', async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
@@ -101,6 +217,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isValid = await comparePassword(password, user.password);
       if (!isValid) {
         return res.status(401).json({ message: 'Invalid credentials' });
+      }
+      
+      // Check if email is verified
+      if (!user.emailVerified && !user.isAdmin) {
+        return res.status(403).json({ 
+          message: 'Please verify your email before logging in',
+          requiresVerification: true,
+          email: user.email
+        });
       }
       
       req.session.userId = user.id;
