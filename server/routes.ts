@@ -48,33 +48,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await hashPassword(userData.password);
       
-      // Create user
+      // Create user (unverified)
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword
       });
       
-      // Set session
-      req.session.userId = user.id;
-      req.session.isAdmin = user.isAdmin || false;
+      // Generate 6-digit verification code
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
       
-      // Send welcome email
+      // Set code expiry to 15 minutes from now
+      const verificationCodeExpiry = new Date(Date.now() + 15 * 60 * 1000);
+      
+      // Update user with verification code
+      await storage.updateUser(user.id, {
+        verificationCode,
+        verificationCodeExpiry
+      });
+      
+      // Send verification email
       try {
-        const { sendWelcomeEmail } = await import('./email');
-        await sendWelcomeEmail(user.email, user.firstName, user.lastName);
+        const { sendVerificationCode } = await import('./email');
+        await sendVerificationCode(user.email, user.firstName, verificationCode);
       } catch (emailError) {
-        console.error('Failed to send welcome email:', emailError);
-        // Don't fail registration if email fails
+        console.error('Failed to send verification email:', emailError);
+        // Return error if verification email fails since it's critical
+        return res.status(500).json({ 
+          message: 'Failed to send verification email. Please try again.' 
+        });
       }
       
       res.json({ 
-        user: { 
-          id: user.id, 
-          email: user.email, 
-          firstName: user.firstName, 
-          lastName: user.lastName,
-          isAdmin: user.isAdmin 
-        } 
+        message: 'Registration successful. Please check your email for a verification code.',
+        email: user.email,
+        requiresVerification: true
       });
     } catch (error) {
       console.error('Registration error:', error);
