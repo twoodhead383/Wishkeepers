@@ -48,9 +48,13 @@ The application follows a full-stack monorepo architecture with a clear separati
 
 ### User Registration and Authentication
 1. Users register with email/password credentials
-2. Passwords are hashed using bcrypt before storage
-3. Session-based authentication maintains user state
-4. Admin users have elevated permissions for request approval
+2. Email verification is required before account access
+   - 6-digit verification code sent via email
+   - Codes expire after 15 minutes
+   - Users can request new codes if needed
+3. Passwords are hashed using bcrypt before storage
+4. Session-based authentication maintains user state
+5. Admin users have elevated permissions and bypass email verification
 
 ### Vault Management
 1. Users create and update their digital vault information
@@ -163,3 +167,15 @@ The application follows a full-stack monorepo architecture with a clear separati
   - **Environment Security**: Added mandatory checks for ENCRYPTION_KEY and SESSION_SECRET environment variables
   - **Database Security**: Added proper error handling and logging for all database operations
   - **Type Safety**: Fixed TypeScript issues and improved type safety across the application
+
+### October 17, 2025
+- **Email Verification System**: Implemented mandatory email verification for new user registrations
+  - Added database fields for email verification status and codes (emailVerified, verificationCode, verificationCodeExpiry)
+  - New users receive a 6-digit verification code via email upon registration
+  - Verification codes expire after 15 minutes for security
+  - Created dedicated email verification page with code input and resend functionality
+  - Users must verify email before accessing the application (admin users bypass this requirement)
+  - Improved error handling to preserve JSON error data for better UX feedback
+  - Updated registration and login flows to redirect to verification when needed
+  - Enhanced email templates with professional verification code display
+  - Security patch: Fixed GCM authentication tag validation vulnerability in encryption module

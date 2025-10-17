@@ -54,8 +54,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password: hashedPassword
       });
       
-      // Generate 6-digit verification code
-      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      // Generate secure 6-digit verification code using crypto
+      const verificationCode = (await import('crypto')).randomInt(100000, 999999).toString();
       
       // Set code expiry to 15 minutes from now
       const verificationCodeExpiry = new Date(Date.now() + 15 * 60 * 1000);
@@ -175,8 +175,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Email already verified' });
       }
       
-      // Generate new verification code
-      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      // Check if user recently requested a code (rate limiting)
+      if (user.verificationCodeExpiry && user.verificationCodeExpiry > new Date()) {
+        const timeLeft = Math.ceil((user.verificationCodeExpiry.getTime() - Date.now()) / 1000 / 60);
+        return res.status(429).json({ 
+          message: `Please wait ${timeLeft} minute(s) before requesting a new code.` 
+        });
+      }
+      
+      // Generate secure 6-digit verification code using crypto
+      const verificationCode = (await import('crypto')).randomInt(100000, 999999).toString();
       const verificationCodeExpiry = new Date(Date.now() + 15 * 60 * 1000);
       
       // Update user with new code
