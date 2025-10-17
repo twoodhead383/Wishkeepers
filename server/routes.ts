@@ -388,17 +388,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/trusted-contacts/:token/accept', async (req, res) => {
-    const contact = await storage.getTrustedContactByToken(req.params.token);
-    if (!contact) {
-      return res.status(404).json({ message: 'Invalid invite token' });
+  // Get invite details by token (public route for accepting invites)
+  app.get('/api/trusted-contacts/invite/:token', async (req, res) => {
+    try {
+      const contact = await storage.getTrustedContactByToken(req.params.token);
+      if (!contact) {
+        return res.status(404).json({ message: 'Invalid invite token' });
+      }
+
+      // Get the vault owner's name
+      const vault = await storage.getVault(contact.vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: 'Vault not found' });
+      }
+
+      const vaultOwner = await storage.getUser(vault.userId);
+      if (!vaultOwner) {
+        return res.status(404).json({ message: 'Vault owner not found' });
+      }
+
+      res.json({
+        contactEmail: contact.contactEmail,
+        contactName: contact.contactName,
+        inviterName: `${vaultOwner.firstName} ${vaultOwner.lastName}`
+      });
+    } catch (error) {
+      console.error('Error fetching invite details:', error);
+      res.status(500).json({ message: 'Failed to fetch invite details' });
     }
-    
-    const updated = await storage.updateTrustedContact(contact.id, {
-      status: 'confirmed'
-    });
-    
-    res.json({ contact: updated });
+  });
+
+  app.post('/api/trusted-contacts/:token/accept', async (req, res) => {
+    try {
+      const contact = await storage.getTrustedContactByToken(req.params.token);
+      if (!contact) {
+        return res.status(404).json({ message: 'Invalid invite token' });
+      }
+
+      const { password } = req.body;
+      
+      if (!password || password.length < 8) {
+        return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+      }
+
+      // Password strength validation
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+      if (!passwordRegex.test(password)) {
+        return res.status(400).json({ 
+          message: 'Password must contain at least one lowercase letter, one uppercase letter, and one number' 
+        });
+      }
+
+      // Check if user already exists with this email
+      let user = await storage.getUserByEmail(contact.contactEmail);
+      
+      if (!user) {
+        // Create new user account (no email verification needed - they came from email invite)
+        const hashedPassword = await bcrypt.hash(password, 12);
+        
+        user = await storage.createUser({
+          email: contact.contactEmail,
+          password: hashedPassword,
+          firstName: contact.contactName.split(' ')[0] || contact.contactName,
+          lastName: contact.contactName.split(' ').slice(1).join(' ') || '',
+          emailVerified: true, // Auto-verified since they came from email invite
+        });
+      }
+
+      // Update contact status to confirmed
+      await storage.updateTrustedContact(contact.id, {
+        status: 'confirmed',
+        confirmedAt: new Date()
+      });
+
+      // Create session for the user
+      req.session.userId = user.id;
+      req.session.save();
+
+      res.json({ 
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isAdmin: user.isAdmin
+        }
+      });
+    } catch (error) {
+      console.error('Error accepting invite:', error);
+      res.status(500).json({ message: 'Failed to accept invitation' });
+    }
   });
 
   // Resend trusted contact invitation
