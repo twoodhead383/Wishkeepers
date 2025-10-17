@@ -332,6 +332,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get vaults where user is nominated as trusted contact
+  app.get('/api/nominated-for', requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get all vaults where this user is a trusted contact
+      const contacts = await storage.getTrustedContactsByEmail(user.email);
+      
+      // Get vault and owner details for each
+      const nominatedFor = await Promise.all(
+        contacts
+          .filter(c => c.status === 'confirmed')
+          .map(async (contact) => {
+            const vault = await storage.getVault(contact.vaultId);
+            if (!vault) return null;
+            
+            const vaultOwner = await storage.getUser(vault.userId);
+            if (!vaultOwner) return null;
+
+            return {
+              contactId: contact.id,
+              vaultId: vault.id,
+              ownerName: `${vaultOwner.firstName} ${vaultOwner.lastName}`,
+              ownerEmail: vaultOwner.email,
+              confirmedAt: contact.confirmedAt
+            };
+          })
+      );
+
+      res.json({ nominatedFor: nominatedFor.filter(n => n !== null) });
+    } catch (error) {
+      console.error('Error fetching nominated-for list:', error);
+      res.status(500).json({ message: 'Failed to fetch nominations', error });
+    }
+  });
+
   // Trusted contacts routes
   app.get('/api/trusted-contacts', requireAuth, async (req, res) => {
     const vault = await storage.getVaultByUserId(req.session.userId!);
@@ -444,7 +483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!user) {
         // Create new user account (no email verification needed - they came from email invite)
-        const hashedPassword = await bcrypt.hash(password, 12);
+        const hashedPassword = await hashPassword(password);
         
         user = await storage.createUser({
           email: contact.contactEmail,
@@ -477,6 +516,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error accepting invite:', error);
       res.status(500).json({ message: 'Failed to accept invitation' });
+    }
+  });
+
+  // Remove as trusted contact
+  app.post('/api/trusted-contacts/:id/remove', requireAuth, async (req, res) => {
+    try {
+      const contactId = req.params.id;
+      
+      // Get the trusted contact
+      const contact = await storage.getTrustedContact(contactId);
+      if (!contact) {
+        return res.status(404).json({ message: 'Trusted contact not found' });
+      }
+
+      // Verify the user is the contact
+      const user = await storage.getUser(req.session.userId!);
+      if (!user || user.email !== contact.contactEmail) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+
+      // Get vault owner details for email notification
+      const vault = await storage.getVault(contact.vaultId);
+      if (!vault) {
+        return res.status(404).json({ message: 'Vault not found' });
+      }
+
+      const vaultOwner = await storage.getUser(vault.userId);
+      if (!vaultOwner) {
+        return res.status(404).json({ message: 'Vault owner not found' });
+      }
+
+      // Update contact status to denied
+      await storage.updateTrustedContact(contactId, {
+        status: 'denied'
+      });
+
+      // Send emails to both parties
+      const { sendRemovalNotification } = await import('./email');
+      try {
+        await sendRemovalNotification(
+          vaultOwner.email,
+          `${vaultOwner.firstName} ${vaultOwner.lastName}`,
+          contact.contactName
+        );
+        await sendRemovalNotification(
+          contact.contactEmail,
+          contact.contactName,
+          `${vaultOwner.firstName} ${vaultOwner.lastName}`
+        );
+      } catch (emailError) {
+        console.error('Failed to send removal notification:', emailError);
+      }
+
+      res.json({ message: 'Removal request sent successfully' });
+    } catch (error) {
+      console.error('Error removing trusted contact:', error);
+      res.status(500).json({ message: 'Failed to remove trusted contact' });
     }
   });
 

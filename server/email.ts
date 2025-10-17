@@ -388,3 +388,57 @@ export async function sendVerificationCode(email: string, firstName: string, ver
     throw error;
   }
 }
+
+export async function sendRemovalNotification(email: string, recipientName: string, otherPersonName: string) {
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      <!-- Header -->
+      <div style="background-color: #f59e0b; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">
+          Trusted Contact Removal Notice
+        </h1>
+      </div>
+      
+      <!-- Main content -->
+      <div style="padding: 30px; background-color: #ffffff;">
+        <h2 style="color: #1f2937; margin: 0 0 16px; font-size: 20px;">
+          Hello ${recipientName},
+        </h2>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 0 0 16px; font-size: 16px;">
+          This is to notify you that <strong>${otherPersonName}</strong> has requested to be removed as a trusted contact.
+        </p>
+        
+        <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #78350f; margin: 0; font-size: 14px;">
+            <strong>What this means:</strong> ${otherPersonName} will no longer have access to request your vault information. You may want to nominate another trusted contact to ensure your wishes are properly executed.
+          </p>
+        </div>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 20px 0 0; font-size: 16px;">
+          If you have any questions or concerns, please don't hesitate to contact our support team.
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">
+          Best regards,<br>
+          <strong style="color: #2563eb;">The Wishkeepers Team</strong>
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await sendEmail(
+      email,
+      'Trusted Contact Removal Notification - Wishkeepers',
+      htmlContent
+    );
+    console.log('✅ Removal notification sent to:', email);
+  } catch (error) {
+    console.error('❌ Failed to send removal notification:', error);
+    throw error;
+  }
+}

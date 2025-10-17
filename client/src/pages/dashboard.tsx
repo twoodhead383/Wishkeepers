@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/lib/api";
+import { NominatedForCard } from "@/components/nominated-for-card";
 import { 
   Church, 
   Umbrella, 
@@ -14,7 +15,9 @@ import {
   Users, 
   CheckCircle,
   AlertCircle,
-  ArrowRight 
+  ArrowRight,
+  Heart,
+  Shield
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -30,8 +33,18 @@ export default function Dashboard() {
     queryFn: api.getTrustedContacts,
   });
 
+  const { data: nominatedForData } = useQuery({
+    queryKey: ["/api/nominated-for"],
+    queryFn: async () => {
+      const response = await fetch('/api/nominated-for', { credentials: 'include' });
+      if (!response.ok) throw new Error('Failed to fetch nominations');
+      return response.json();
+    },
+  });
+
   const vault = vaultData?.vault;
   const contacts = contactsData?.contacts || [];
+  const nominatedFor = nominatedForData?.nominatedFor || [];
 
   const vaultSections = [
     {
@@ -110,23 +123,77 @@ export default function Dashboard() {
   return (
     <div className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="mb-8">
-            <CardHeader>
-              <div className="flex items-center justify-between mb-4">
-                <CardTitle className="text-2xl font-bold text-gray-900">
-                  Welcome back, {user?.firstName}
-                </CardTitle>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  (vault?.completionPercentage || 0) === 100 
-                    ? "bg-green-100 text-green-800"
-                    : "bg-yellow-100 text-yellow-800"
-                }`}>
-                  {vault?.completionPercentage || 0}% Complete
-                </span>
-              </div>
-              <p className="text-gray-600 mb-6">
-                Complete your vault to ensure your loved ones have everything they need.
-              </p>
+          {/* Nominated For Section - Show if user is a trusted contact for others */}
+          {nominatedFor.length > 0 && (
+            <Card className="mb-8 border-2 border-blue-200 bg-blue-50/50">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Heart className="h-6 w-6 text-red-500" />
+                  <CardTitle className="text-xl font-bold">You're a Trusted Contact</CardTitle>
+                </div>
+                <CardDescription>
+                  You've been nominated as a trusted contact for the following {nominatedFor.length === 1 ? 'person' : 'people'}. 
+                  You can request access to their vault when needed.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {nominatedFor.map((nomination: any) => (
+                    <NominatedForCard 
+                      key={nomination.contactId}
+                      contactId={nomination.contactId}
+                      ownerName={nomination.ownerName}
+                      ownerEmail={nomination.ownerEmail}
+                      vaultId={nomination.vaultId}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Create Your Own Vault - Show if user has no vault but is a trusted contact */}
+          {nominatedFor.length > 0 && !vault && (
+            <Card className="mb-8 border-2 border-green-200 bg-green-50/50">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="h-6 w-6 text-green-600" />
+                  <CardTitle className="text-xl font-bold">Create Your Own Vault</CardTitle>
+                </div>
+                <CardDescription>
+                  It's quick, easy, and gives your loved ones peace of mind. Start protecting your legacy today.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/vault">
+                  <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700" data-testid="button-create-vault">
+                    <Shield className="h-4 w-4 mr-2" />
+                    Start Building Your Vault
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Main Vault Section - Only show if user has a vault */}
+          {vault && (
+            <Card className="mb-8">
+              <CardHeader>
+                <div className="flex items-center justify-between mb-4">
+                  <CardTitle className="text-2xl font-bold text-gray-900">
+                    {nominatedFor.length > 0 ? 'Your Vault' : `Welcome back, ${user?.firstName}`}
+                  </CardTitle>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    (vault?.completionPercentage || 0) === 100 
+                      ? "bg-green-100 text-green-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}>
+                    {vault?.completionPercentage || 0}% Complete
+                  </span>
+                </div>
+                <p className="text-gray-600 mb-6">
+                  Complete your vault to ensure your loved ones have everything they need.
+                </p>
               
               <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
                 <div 
@@ -177,6 +244,7 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+          )}
 
           {/* Quick Actions */}
           <div className="grid md:grid-cols-2 gap-8">

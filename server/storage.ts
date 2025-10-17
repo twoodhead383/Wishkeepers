@@ -36,7 +36,9 @@ export interface IStorage {
   
   // Trusted Contacts
   getTrustedContacts(vaultId: string): Promise<TrustedContact[]>;
+  getTrustedContact(contactId: string): Promise<TrustedContact | undefined>;
   getTrustedContactByToken(token: string): Promise<TrustedContact | undefined>;
+  getTrustedContactsByEmail(email: string): Promise<TrustedContact[]>;
   createTrustedContact(contact: InsertTrustedContact & { vaultId: string }): Promise<TrustedContact>;
   updateTrustedContact(id: string, contact: Partial<TrustedContact>): Promise<TrustedContact | undefined>;
   getAllTrustedContacts(): Promise<TrustedContact[]>;
@@ -239,6 +241,10 @@ export class DatabaseStorage implements IStorage {
   async getTrustedContactByToken(token: string): Promise<TrustedContact | undefined> {
     const [contact] = await db.select().from(trustedContacts).where(eq(trustedContacts.inviteToken, token));
     return contact || undefined;
+  }
+
+  async getTrustedContactsByEmail(email: string): Promise<TrustedContact[]> {
+    return await db.select().from(trustedContacts).where(eq(trustedContacts.contactEmail, email));
   }
 
   async createTrustedContact(contactData: InsertTrustedContact & { vaultId: string }): Promise<TrustedContact> {
