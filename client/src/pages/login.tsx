@@ -33,11 +33,21 @@ export default function Login() {
   const onSubmit = (data: LoginRequest) => {
     login(data, {
       onError: (error: any) => {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to sign in",
-          variant: "destructive",
-        });
+        // Check if error is due to unverified email
+        if (error.requiresVerification && error.email) {
+          toast({
+            title: "Email Not Verified",
+            description: "Please verify your email address to continue.",
+            variant: "destructive",
+          });
+          setLocation(`/verify-email/${encodeURIComponent(error.email)}`);
+        } else {
+          toast({
+            title: "Error",
+            description: error.message || "Failed to sign in",
+            variant: "destructive",
+          });
+        }
       },
     });
   };

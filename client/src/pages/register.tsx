@@ -34,6 +34,15 @@ export default function Register() {
 
   const onSubmit = (data: InsertUser) => {
     register(data, {
+      onSuccess: (response: any) => {
+        if (response.requiresVerification) {
+          toast({
+            title: "Check Your Email",
+            description: response.message || "We've sent a verification code to your email address.",
+          });
+          setLocation(`/verify-email/${encodeURIComponent(response.email)}`);
+        }
+      },
       onError: (error: any) => {
         toast({
           title: "Error",

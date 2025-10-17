@@ -10,6 +10,7 @@ import { AdminProtectedRoute } from "@/components/admin-protected-route";
 import Home from "@/pages/home";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import VerifyEmail from "@/pages/verify-email";
 import Dashboard from "@/pages/dashboard";
 import Vault from "@/pages/vault";
 import TrustedContacts from "@/pages/trusted-contacts";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/verify-email/:email" component={VerifyEmail} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/vault" component={Vault} />
       <Route path="/trusted-contacts" component={TrustedContacts} />
@@ -90,7 +92,7 @@ function AppContent() {
 
   // Check if current route is an admin route or auth route
   const isAdminRoute = location.startsWith('/admin');
-  const isAuthRoute = location === '/login' || location === '/register';
+  const isAuthRoute = location === '/login' || location === '/register' || location.startsWith('/verify-email');
   
   // For admin routes, only show layout if user is authenticated and is admin
   // For auth routes, don't show layout
