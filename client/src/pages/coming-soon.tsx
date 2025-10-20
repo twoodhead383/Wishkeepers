@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Shield, Lock, Heart, CheckCircle } from "lucide-react";
+import { Lock, Heart, Shield, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
 import {
   Form,
   FormControl,
@@ -85,13 +86,13 @@ export default function ComingSoon() {
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-6">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-2xl shadow-lg">
-              <Shield className="w-12 h-12 text-white" />
-            </div>
+            <img 
+              src={logoImage} 
+              alt="Wishkeepers" 
+              className="h-20 w-auto"
+              data-testid="img-logo"
+            />
           </div>
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-2">
-            Wishkeepers
-          </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Your Digital Legacy Vault
           </p>
