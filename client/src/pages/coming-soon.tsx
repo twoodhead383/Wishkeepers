@@ -93,17 +93,17 @@ export default function ComingSoon() {
               data-testid="img-logo"
             />
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
             Your Digital Legacy Vault
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 md:p-12">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 md:p-8">
           {!submitted ? (
             <>
               {/* Coming Soon Badge */}
-              <div className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold px-4 py-2 rounded-full mb-6">
+              <div className="items-center text-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xl font-semibold px-4 py-2 rounded-full mb-6">
                 Coming Soon
               </div>
 
