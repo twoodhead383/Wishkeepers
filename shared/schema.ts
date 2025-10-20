@@ -161,6 +161,26 @@ export const insertThirdPartySchema = createInsertSchema(thirdParties).omit({
   updatedAt: true,
 });
 
+// Interested Parties Schema - for holding page email capture
+export const interestedParties = pgTable("interested_parties", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull().unique(),
+  consent: boolean("consent").notNull().default(true),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertInterestedPartySchema = createInsertSchema(interestedParties).omit({
+  id: true,
+  createdAt: true,
+}).extend({
+  email: z.string().email("Invalid email format").max(320, "Email too long"),
+  fullName: z.string().min(1, "Name is required").max(200, "Name too long"),
+  consent: z.boolean().default(true),
+  notes: z.string().max(1000, "Notes too long").optional(),
+});
+
 // Login schema
 export const loginSchema = z.object({
   email: z.string().email("Invalid email format").max(320, "Email too long"),
@@ -179,4 +199,6 @@ export type DataReleaseRequest = typeof dataReleaseRequests.$inferSelect;
 export type InsertDataReleaseRequest = z.infer<typeof insertDataReleaseRequestSchema>;
 export type ThirdParty = typeof thirdParties.$inferSelect;
 export type InsertThirdParty = z.infer<typeof insertThirdPartySchema>;
+export type InterestedParty = typeof interestedParties.$inferSelect;
+export type InsertInterestedParty = z.infer<typeof insertInterestedPartySchema>;
 export type LoginRequest = z.infer<typeof loginSchema>;

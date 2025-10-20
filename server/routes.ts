@@ -11,7 +11,8 @@ import {
   insertVaultSchema,
   insertTrustedContactSchema,
   insertDataReleaseRequestSchema,
-  insertThirdPartySchema
+  insertThirdPartySchema,
+  insertInterestedPartySchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -33,6 +34,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
     name: 'wishkeepers_session' // Don't use default session name
   }));
+
+  // Public route for holding page email capture
+  app.post('/api/interested-parties', async (req, res) => {
+    try {
+      const partyData = insertInterestedPartySchema.parse(req.body);
+      
+      // Check if email already exists
+      const existingParties = await storage.listInterestedParties();
+      const emailExists = existingParties.some(p => p.email.toLowerCase() === partyData.email.toLowerCase());
+      
+      if (emailExists) {
+        return res.status(409).json({ message: 'This email has already been registered for updates' });
+      }
+      
+      // Create interested party record
+      const party = await storage.createInterestedParty(partyData);
+      
+      res.json({ 
+        message: 'Thank you for your interest! We\'ll notify you when Wishkeepers launches.',
+        success: true
+      });
+    } catch (error) {
+      console.error('Error registering interested party:', error);
+      res.status(400).json({ message: 'Invalid data provided' });
+    }
+  });
 
   // Auth routes
   app.post('/api/register', async (req, res) => {

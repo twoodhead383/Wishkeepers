@@ -18,6 +18,7 @@ import TrustedContacts from "@/pages/trusted-contacts";
 import Admin from "@/pages/admin";
 import ThirdParties from "@/pages/admin/third-parties";
 import AdminUsers from "@/pages/admin/users";
+import ComingSoon from "@/pages/coming-soon";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
@@ -49,6 +50,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/coming-soon" component={ComingSoon} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/verify-email/:email" component={VerifyEmail} />
@@ -95,11 +97,12 @@ function AppContent() {
   // Check if current route is an admin route or auth route
   const isAdminRoute = location.startsWith('/admin');
   const isAuthRoute = location === '/login' || location === '/register' || location.startsWith('/verify-email') || location.startsWith('/invite');
+  const isComingSoonRoute = location === '/coming-soon';
   
   // For admin routes, only show layout if user is authenticated and is admin
-  // For auth routes, don't show layout
+  // For auth routes and coming-soon, don't show layout
   // For other routes, always show layout
-  const shouldShowLayout = !isAdminRoute && !isAuthRoute;
+  const shouldShowLayout = !isAdminRoute && !isAuthRoute && !isComingSoonRoute;
 
   if (shouldShowLayout) {
     return (

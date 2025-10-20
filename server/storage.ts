@@ -9,11 +9,14 @@ import {
   type InsertDataReleaseRequest,
   type ThirdParty,
   type InsertThirdParty,
+  type InterestedParty,
+  type InsertInterestedParty,
   users,
   vaults,
   trustedContacts,
   dataReleaseRequests,
-  thirdParties
+  thirdParties,
+  interestedParties
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { encryptField, decryptField } from "./encryption";
@@ -64,6 +67,10 @@ export interface IStorage {
   createThirdParty(thirdParty: InsertThirdParty): Promise<ThirdParty>;
   updateThirdParty(id: string, thirdParty: Partial<InsertThirdParty>): Promise<ThirdParty | undefined>;
   deleteThirdParty(id: string): Promise<void>;
+  
+  // Interested Parties
+  createInterestedParty(party: InsertInterestedParty): Promise<InterestedParty>;
+  listInterestedParties(): Promise<InterestedParty[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -419,6 +426,19 @@ export class DatabaseStorage implements IStorage {
 
   async deleteThirdParty(id: string): Promise<void> {
     await db.delete(thirdParties).where(eq(thirdParties.id, id));
+  }
+
+  // Interested Parties methods
+  async createInterestedParty(partyData: InsertInterestedParty): Promise<InterestedParty> {
+    const [party] = await db
+      .insert(interestedParties)
+      .values(partyData)
+      .returning();
+    return party;
+  }
+
+  async listInterestedParties(): Promise<InterestedParty[]> {
+    return await db.select().from(interestedParties);
   }
 }
 
