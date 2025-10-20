@@ -136,7 +136,7 @@ export default function ComingSoon() {
                       Peace of Mind
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 text-sm">
-                      Store funeral wishes, insurance details, and personal messages
+                      Store funeral wishes, gifting details, important information, and personal messages
                       for trusted contacts
                     </p>
                   </div>
