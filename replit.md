@@ -168,6 +168,22 @@ The application follows a full-stack monorepo architecture with a clear separati
   - **Database Security**: Added proper error handling and logging for all database operations
   - **Type Safety**: Fixed TypeScript issues and improved type safety across the application
 
+### October 20, 2025
+- **Coming Soon Holding Page**: Created standalone holding page for pre-launch email capture
+  - Added `interested_parties` database table to store pre-launch signups with email, name, and consent tracking
+  - Created public API endpoint POST /api/interested-parties with duplicate email detection (409 status)
+  - Built professional Coming Soon page at `/coming-soon` route with:
+    - Wishkeepers branding and Shield logo
+    - Email capture form with name, email, and consent checkbox
+    - Clear messaging about digital legacy vault purpose and features
+    - Privacy disclaimer about future contact when app launches
+    - Success state confirmation after submission
+    - Full dark mode support and responsive design
+  - Page is standalone (no navbar/layout) for use as primary .com domain landing page
+  - Test users can continue using full app via replit domain while public sees holding page
+  - Includes comprehensive data-testid attributes for testing and accessibility
+  - Successfully tested end-to-end: form validation, submission, database persistence, and success state
+
 ### October 17, 2025
 - **Email Verification System**: Implemented mandatory email verification for new user registrations
   - Added database fields for email verification status and codes (emailVerified, verificationCode, verificationCodeExpiry)
