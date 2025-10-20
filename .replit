@@ -47,8 +47,8 @@ localPort = 34507
 externalPort = 3000
 
 [[ports]]
-localPort = 45369
-externalPort = 3002
+localPort = 39151
+externalPort = 3003
 
 [agent]
 integrations = ["javascript_database==1.0.0", "perplexity_v0==1.0.0"]
