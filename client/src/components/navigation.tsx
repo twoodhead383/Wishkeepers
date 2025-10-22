@@ -196,7 +196,7 @@ export function Navigation() {
                             <Lock className="h-8 w-8 text-green-600" />
                           </div>
                           <h3 className="font-semibold mb-2">AES-256 Encryption</h3>
-                          <p className="text-sm text-gray-600">Military-grade encryption protects your data both in transit and at rest.</p>
+                          <p className="text-sm text-gray-600">Bank-grade encryption protects your data both in transit and at rest.</p>
                         </div>
                         <div className="text-center p-4">
                           <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">

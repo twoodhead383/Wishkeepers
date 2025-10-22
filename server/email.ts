@@ -530,7 +530,7 @@ export async function sendProspectInvitation(email: string, firstName: string) {
         </div>
         
         <p style="color: #4b5563; line-height: 1.6; margin: 20px 0 24px; font-size: 16px;">
-          Your information is protected with military-grade encryption, ensuring that only you and your designated trusted contacts can ever access your vault.
+          Your information is protected with bank-grade encryption, ensuring that only you and your designated trusted contacts can ever access your vault.
         </p>
         
         <div style="text-align: center; margin: 30px 0;">
