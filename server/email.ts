@@ -1,6 +1,18 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthenticationResult, ConfidentialClientApplication } from '@azure/msal-node';
 
+// Helper function to generate email logo header
+function getEmailLogoHeader(): string {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  const logoUrl = `${baseUrl}/email-assets/logo.png`;
+  
+  return `
+    <div style="text-align: center; padding: 30px 0 20px 0;">
+      <img src="${logoUrl}" alt="Wishkeepers" style="height: 40px; width: auto; display: inline-block;" />
+    </div>
+  `;
+}
+
 // Microsoft Graph authentication configuration
 const msalConfig = {
   auth: {
@@ -145,6 +157,7 @@ export async function sendTrustedContactInvite(
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      ${getEmailLogoHeader()}
       <h2 style="color: #2563eb;">You've been nominated as a trusted contact</h2>
       <p>Hello ${name},</p>
       <p>${inviterName} has nominated you as a trusted contact on Wishkeepers, a secure digital legacy vault.</p>
@@ -187,9 +200,9 @@ export async function sendWelcomeEmail(email: string, firstName: string, lastNam
   
   const htmlContent = `
     <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
       <!-- Header with branding -->
       <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
-        
         <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
           Welcome to Wishkeepers
         </h1>
@@ -281,6 +294,7 @@ export async function sendWelcomeEmail(email: string, firstName: string, lastNam
 export async function sendVaultCompletionReminder(email: string, firstName: string) {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      ${getEmailLogoHeader()}
       <h2 style="color: #2563eb;">Your vault is waiting for you</h2>
       <p>Hello ${firstName},</p>
       <p>We noticed your Wishkeepers vault isn't quite complete yet. Taking a few minutes to finish it now can provide tremendous peace of mind for you and your loved ones.</p>
@@ -308,6 +322,7 @@ export async function sendVaultCompletionReminder(email: string, firstName: stri
 export async function sendVerificationCode(email: string, firstName: string, verificationCode: string) {
   const htmlContent = `
     <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
       <!-- Header with branding -->
       <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
@@ -393,6 +408,7 @@ export async function sendVerificationCode(email: string, firstName: string, ver
 export async function sendRemovalNotification(email: string, recipientName: string, otherPersonName: string) {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
       <!-- Header -->
       <div style="background-color: #f59e0b; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">
