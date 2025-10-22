@@ -46,17 +46,26 @@ The application utilizes a full-stack monorepo architecture, separating client, 
 ## Recent Changes
 
 ### October 22, 2025
-- **Email Logo Fix for Production**: Fixed broken logo images in production emails
-  - Switched from external URL-based logo hosting to base64 data URI embedding
-  - Created getLogoDataUri() function that reads logo file, converts to base64, and caches the result (~134KB)
-  - Updated getEmailLogoHeader() to embed logo directly in email HTML as base64 data URI
-  - All 5 email templates now have self-contained logos with no external dependencies:
+
+#### Database Connection Pool Error Handling
+- **Critical Fix**: Added comprehensive error handling to prevent server crashes from database connection termination
+  - Configured Neon connection pool with proper timeouts (30s idle, 10s connection timeout, max 10 connections)
+  - Added error event handlers to catch and log unexpected database pool errors
+  - Implemented graceful shutdown process that properly closes database connections on SIGTERM/SIGINT
+  - Added connection lifecycle logging (connect/remove events) for monitoring
+  - Prevents unhandled rejection crashes when Neon terminates idle connections
+
+#### Email Logo Fix for Mobile Gmail
+- **Mobile Compatibility**: Fixed broken logo images in mobile Gmail app
+  - Switched from base64 data URI embedding to CID (Content-ID) inline attachments
+  - Mobile Gmail blocks data URIs for security, but CID references work universally
+  - Logo now attached as inline Microsoft Graph attachment with `contentId: 'wishkeepers-logo'`
+  - Implemented caching to avoid repeated disk reads on high-volume sends
+  - All 5 email templates now use `cid:wishkeepers-logo` reference:
     - Trusted contact invitation emails
     - Welcome emails for new users
     - Vault completion reminder emails
     - Email verification code emails
     - Trusted contact removal notification emails
-  - Removed unnecessary /email-assets/logo.png route
-  - Logo displays consistently at 40px height across all email clients
+  - Logo displays consistently at 40px height across all email clients (desktop and mobile)
   - Graceful degradation if logo file cannot be loaded
-  - Production-safe implementation that works regardless of BASE_URL configuration
