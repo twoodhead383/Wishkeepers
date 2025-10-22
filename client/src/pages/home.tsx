@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Lock, FileText, Users, Gift, Shield, Mail, Phone, MessageCircle } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
+import LeoandTom from "@/components/leoandtom.jpg";
 
 
 export default function Home() {
@@ -249,84 +250,32 @@ export default function Home() {
 
                     <div className="space-y-8">
                       {/* Step-by-step Process */}
-                      <div className="grid md:grid-cols-3 gap-6">
-                        <div className="text-center p-6 bg-blue-50 rounded-xl">
-                          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Lock className="h-8 w-8 text-purple-600" />
-                          </div>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3">1. Create Your Vault</h3>
-                          <p className="text-gray-600">Register and start building your secure digital legacy vault with your important information.</p>
+                      <div className="prose prose-slate max-w-none">
+                        <p>
+                          Wishkeepers was founded by <strong>Leo and Tom</strong>, whose family has spent over seventy
+                          years in Funeral Directing. Through that and their own personal experiences, they saw time and again how difficult it
+                          can be for loved ones to find key information or understand someone’s wishes after they’ve gone.
+                        </p>
+                        <p>
+                          Out of those moments came a simple idea, a digital vault that helps people protect their legacy
+                          and guide those left behind, securely and sensitively.
+                        </p>
+                        <p>
+                          Wishkeepers brings traditional compassion into the digital age: combining empathy with modern
+                          security, privacy, and simplicity. It exists so that when the time comes, your loved ones aren’t
+                          left searching for answers, only comfort in knowing your wishes are clear.
+                        </p>
+                        {/* Centred image section */}
+                        <div className="my-10 flex justify-center">
+                          <img
+                            src={LeoandTom}
+                            alt="Wishkeepers Founders Leo and Tom"
+                            className="mx-auto w-1/4 md:w-1/4 rounded-lg shadow"
+                          />
                         </div>
-
-                        <div className="text-center p-6 bg-green-50 rounded-xl">
-                          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <FileText className="h-8 w-8 text-purple-600" />
-                          </div>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3">2. Store Information</h3>
-                          <p className="text-gray-600">Add your funeral wishes, insurance details, important information, and personal messages - all encrypted and secure.</p>
-                        </div>
-
-                        <div className="text-center p-6 bg-purple-50 rounded-xl">
-                          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Users className="h-8 w-8 text-purple-600" />
-                          </div>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3">3. Nominate Trusted Contacts</h3>
-                          <p className="text-gray-600">Invite family members or friends who can request access to your vault when needed.</p>
-                        </div>
-                      </div>
-
-                      {/* Detailed Features */}
-                      <div className="space-y-6">
-                        <h3 className="text-xl font-semibold text-center">What You Can Store</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Gift className="h-4 w-4 text-purple-500" />
-                              Funeral Wishes & Personal Messages
-                            </h4>
-                            <p className="text-sm text-gray-600">Your preferences for services, personal items to gift, and heartfelt messages for loved ones.</p>
-                          </div>
-                          <div className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Shield className="h-4 w-4 text-purple-500" />
-                              Important Information
-                            </h4>
-                            <p className="text-sm text-gray-600">Policy numbers, account details (such as Socials), and important information your family will need.</p>
-                          </div>
-                          <div className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Lock className="h-4 w-4 text-purple-500" />
-                              Digital Assets & Passwords
-                            </h4>
-                            <p className="text-sm text-gray-600">Account access information and digital asset details, securely encrypted.</p>
-                          </div>
-                          <div className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-purple-500" />
-                              Important Documents
-                            </h4>
-                            <p className="text-sm text-gray-600">Location of wills, deeds, certificates, and other critical documents.</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Access Process */}
-                      <div className="bg-blue-50 p-6 rounded-lg">
-                        <h3 className="text-lg font-semibold mb-4 text-center">How Your Family Accesses Information</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                            <p className="text-gray-700">Trusted contact submits a data release request with required documentation</p>
-                          </div>
-                          <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                            <p className="text-gray-700">The request is certified to ensure security and authenticity</p>
-                          </div>
-                          <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                            <p className="text-gray-700">Upon approval, your information is made available to your designated contacts</p>
-                          </div>
-                        </div>
+                        <p className="text-center text-sm text-gray-600">
+                          <em>Wishkeepers Ltd is a UK-based technology company dedicated to making legacy planning safe, simple, and human.</em>
+                        </p>
                       </div>
                     </div>
                   </DialogContent>
