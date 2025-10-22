@@ -102,3 +102,21 @@ The application utilizes a full-stack monorepo architecture, separating client, 
     - Documents optional variables (BASE_URL, PERPLEXITY_API_KEY)
     - Provides pre-deployment checklist
     - Includes troubleshooting guidance
+
+#### Admin User Management Features
+- **User Deletion with Cascade**: Implemented safe user deletion for data retention compliance
+  - Admin users page with search functionality (filters by name or email)
+  - Delete button for each user (disabled for self-deletion protection)
+  - Atomic transaction-based cascade deletion: trusted_contacts → data_release_requests → vaults → user
+  - Confirmation dialog before deletion to prevent accidental data loss
+  - DELETE `/api/admin/users/:id` endpoint with `requireAdmin` protection
+  
+- **Prospect Invitation System**: Marketing tool for sending branded invitations to potential users
+  - Two invitation modes: single entry form and CSV bulk upload
+  - Email template matching existing brand design with logo via CID attachment
+  - Zod validation enforcing max 100 invitations per batch, email format validation, name requirements
+  - Automatic case-insensitive email deduplication to prevent duplicate sends
+  - Row-level error tracking for bulk uploads with detailed failure reporting
+  - POST `/api/admin/invite-prospects` endpoint processes invitations via Microsoft Graph
+  - CSV format: `email,firstName` (one prospect per line)
+  - Success/failure reporting with sent count, skipped duplicates, and error details
