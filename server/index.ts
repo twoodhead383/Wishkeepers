@@ -102,11 +102,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
 
@@ -135,4 +131,8 @@ app.use((req, res, next) => {
 
   process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
   process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-})();
+})().catch((error) => {
+  console.error('Fatal error during server initialization:', error);
+  console.error('Stack trace:', error.stack);
+  process.exit(1);
+});
