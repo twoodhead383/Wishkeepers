@@ -96,7 +96,7 @@ export function Navigation() {
                       <div className="grid md:grid-cols-3 gap-6">
                         <div className="text-center p-6 bg-blue-50 rounded-xl">
                           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Users className="h-8 w-8 text-blue-600" />
+                            <Lock className="h-8 w-8 text-purple-600" />
                           </div>
                           <h3 className="text-xl font-semibold text-gray-900 mb-3">1. Create Your Vault</h3>
                           <p className="text-gray-600">Register and start building your secure digital legacy vault with your important information.</p>
@@ -104,10 +104,10 @@ export function Navigation() {
                         
                         <div className="text-center p-6 bg-green-50 rounded-xl">
                           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <FileText className="h-8 w-8 text-green-600" />
+                            <FileText className="h-8 w-8 text-purple-600" />
                           </div>
                           <h3 className="text-xl font-semibold text-gray-900 mb-3">2. Store Information</h3>
-                          <p className="text-gray-600">Add your funeral wishes, insurance details, banking information, and personal messages - all encrypted and secure.</p>
+                          <p className="text-gray-600">Add your funeral wishes, insurance details, important information, and personal messages - all encrypted and secure.</p>
                         </div>
                         
                         <div className="text-center p-6 bg-purple-50 rounded-xl">
@@ -125,21 +125,21 @@ export function Navigation() {
                         <div className="grid md:grid-cols-2 gap-4">
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Gift className="h-4 w-4 text-red-500" />
+                              <Gift className="h-4 w-4 text-purple-500" />
                               Funeral Wishes & Personal Messages
                             </h4>
                             <p className="text-sm text-gray-600">Your preferences for services, personal items to gift, and heartfelt messages for loved ones.</p>
                           </div>
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Shield className="h-4 w-4 text-blue-500" />
-                              Insurance & Financial Information
+                              <Shield className="h-4 w-4 text-purple-500" />
+                              Important Information
                             </h4>
-                            <p className="text-sm text-gray-600">Policy numbers, account details, and important financial documents your family will need.</p>
+                            <p className="text-sm text-gray-600">Policy numbers, account details (such as Socials), and important information your family will need.</p>
                           </div>
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2 flex items-center gap-2">
-                              <Lock className="h-4 w-4 text-green-500" />
+                              <Lock className="h-4 w-4 text-purple-500" />
                               Digital Assets & Passwords
                             </h4>
                             <p className="text-sm text-gray-600">Account access information and digital asset details, securely encrypted.</p>
@@ -164,7 +164,7 @@ export function Navigation() {
                           </div>
                           <div className="flex items-start gap-3">
                             <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                            <p className="text-gray-700">Our admin team verifies the request to ensure security and authenticity</p>
+                            <p className="text-gray-700">The request is certified to ensure security and authenticity</p>
                           </div>
                           <div className="flex items-start gap-3">
                             <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
@@ -193,7 +193,7 @@ export function Navigation() {
                       <div className="grid md:grid-cols-3 gap-6">
                         <div className="text-center p-4">
                           <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <Lock className="h-8 w-8 text-blue-600" />
+                            <Lock className="h-8 w-8 text-green-600" />
                           </div>
                           <h3 className="font-semibold mb-2">AES-256 Encryption</h3>
                           <p className="text-sm text-gray-600">Military-grade encryption protects your data both in transit and at rest.</p>
@@ -207,7 +207,7 @@ export function Navigation() {
                         </div>
                         <div className="text-center p-4">
                           <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <UserCheck className="h-8 w-8 text-purple-600" />
+                            <UserCheck className="h-8 w-8 text-green-600" />
                           </div>
                           <h3 className="font-semibold mb-2">Verified Access</h3>
                           <p className="text-sm text-gray-600">Multi-step verification process ensures only authorized access to your vault.</p>
@@ -237,7 +237,7 @@ export function Navigation() {
                               <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                               <div>
                                 <h4 className="font-semibold">Admin Verification</h4>
-                                <p className="text-sm text-gray-600">All data release requests are manually reviewed by our security team before approval.</p>
+                                <p className="text-sm text-gray-600">All data release requests are certified before release.</p>
                               </div>
                             </div>
                             <div className="flex items-start gap-3">
@@ -294,7 +294,7 @@ export function Navigation() {
                           </div>
                           <h3 className="font-semibold mb-2">Phone Support</h3>
                           <p className="text-sm text-gray-600 mb-3">Speak directly with our support team.</p>
-                          <p className="text-green-600 font-medium">1-800-WISHKEEP</p>
+                          <p className="text-green-600 font-medium">+44 1623 827900</p>
                           <p className="text-xs text-gray-500">Mon-Fri 9AM-6PM EST</p>
                         </div>
                         
@@ -322,7 +322,7 @@ export function Navigation() {
                           </div>
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2">How do trusted contacts access my vault?</h4>
-                            <p className="text-sm text-gray-600">Trusted contacts must submit a data release request with proper documentation. Our admin team verifies each request before granting access to ensure security.</p>
+                            <p className="text-sm text-gray-600">Trusted contacts must submit a certified data release request. Upon submitting the certified request, your data is shared with those you have nominated as trusted contacts.</p>
                           </div>
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2">Can I update my information anytime?</h4>
@@ -330,7 +330,7 @@ export function Navigation() {
                           </div>
                           <div className="bg-gray-50 p-4 rounded-lg">
                             <h4 className="font-semibold mb-2">Is there a cost to use Wishkeepers?</h4>
-                            <p className="text-sm text-gray-600">We offer both free and premium plans. The basic vault is free forever, with premium features available for advanced needs.</p>
+                            <p className="text-sm text-gray-600">The vault is free.</p>
                           </div>
                         </div>
                       </div>
@@ -339,10 +339,10 @@ export function Navigation() {
                       <div className="bg-red-50 border-l-4 border-red-500 p-6">
                         <h3 className="text-lg font-semibold text-red-900 mb-2">Emergency Situations</h3>
                         <p className="text-red-800 mb-3">
-                          If you need immediate assistance with accessing a vault due to a family emergency, please call our emergency support line.
+                          If you need immediate assistance with accessing a vault due to a family emergency, please call our support line.
                         </p>
-                        <p className="text-red-900 font-semibold">Emergency: 1-800-WISHKEEP ext. 911</p>
-                        <p className="text-sm text-red-700">Available 24/7 for verified emergencies</p>
+                        <p className="text-red-900 font-semibold">Emergency: +44 1623827900</p>
+                        <p className="text-sm text-red-700">Available 24/7</p>
                       </div>
                     </div>
                   </DialogContent>

@@ -188,7 +188,7 @@ export default function ThirdParties() {
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Third Party Partners</h1>
-              <p className="text-gray-600">Manage partner organizations and service providers</p>
+              <p className="text-gray-600">Manage partner organisations and service providers</p>
             </div>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
@@ -429,7 +429,7 @@ export default function ThirdParties() {
           {/* Third Parties List */}
           <Card>
             <CardHeader>
-              <CardTitle>Partner Organizations</CardTitle>
+              <CardTitle>Partner Organisations</CardTitle>
             </CardHeader>
             <CardContent>
               {thirdParties.length === 0 ? (

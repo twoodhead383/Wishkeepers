@@ -47,7 +47,6 @@ export default function Home() {
               <ul className="space-y-2">
                 <li><span className="text-gray-300 hover:text-white transition-colors cursor-pointer">About Us</span></li>
                 <li><span className="text-gray-300 hover:text-white transition-colors cursor-pointer">How it Works</span></li>
-                <li><span className="text-gray-300 hover:text-white transition-colors cursor-pointer">Pricing</span></li>
                 <li><span className="text-gray-300 hover:text-white transition-colors cursor-pointer">Terms of Service</span></li>
               </ul>
             </div>

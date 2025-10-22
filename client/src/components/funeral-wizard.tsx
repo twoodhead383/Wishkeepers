@@ -197,7 +197,7 @@ export function FuneralWizard({ initialData, onSave, onCancel }: FuneralWizardPr
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="religious">Religious - I follow a specific faith tradition</SelectItem>
-                    <SelectItem value="spiritual">Spiritual - I believe in something greater, but not organized religion</SelectItem>
+                    <SelectItem value="spiritual">Spiritual - I believe in something greater, but not organised religion</SelectItem>
                     <SelectItem value="neither">Neither - I prefer secular/non-religious approaches</SelectItem>
                   </SelectContent>
                 </Select>
