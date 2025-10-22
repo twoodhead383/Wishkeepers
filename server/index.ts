@@ -109,4 +109,30 @@ app.use((req, res, next) => {
   }, () => {
     log(`serving on port ${port}`);
   });
+
+  const gracefulShutdown = async (signal: string) => {
+    log(`${signal} received, shutting down gracefully...`);
+    
+    server.close(async () => {
+      log('HTTP server closed');
+      
+      try {
+        const { pool } = await import('./db');
+        await pool.end();
+        log('Database pool closed');
+      } catch (error) {
+        console.error('Error closing database pool:', error);
+      }
+      
+      process.exit(0);
+    });
+
+    setTimeout(() => {
+      console.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 })();
