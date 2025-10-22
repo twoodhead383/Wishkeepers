@@ -42,3 +42,21 @@ The application utilizes a full-stack monorepo architecture, separating client, 
 - **Email**: Nodemailer.
 - **Validation**: Zod.
 - **UI Components**: Radix UI.
+
+## Recent Changes
+
+### October 22, 2025
+- **Email Logo Fix for Production**: Fixed broken logo images in production emails
+  - Switched from external URL-based logo hosting to base64 data URI embedding
+  - Created getLogoDataUri() function that reads logo file, converts to base64, and caches the result (~134KB)
+  - Updated getEmailLogoHeader() to embed logo directly in email HTML as base64 data URI
+  - All 5 email templates now have self-contained logos with no external dependencies:
+    - Trusted contact invitation emails
+    - Welcome emails for new users
+    - Vault completion reminder emails
+    - Email verification code emails
+    - Trusted contact removal notification emails
+  - Removed unnecessary /email-assets/logo.png route
+  - Logo displays consistently at 40px height across all email clients
+  - Graceful degradation if logo file cannot be loaded
+  - Production-safe implementation that works regardless of BASE_URL configuration
