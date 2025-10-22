@@ -18,6 +18,7 @@ import TrustedContacts from "@/pages/trusted-contacts";
 import Admin from "@/pages/admin";
 import ThirdParties from "@/pages/admin/third-parties";
 import AdminUsers from "@/pages/admin/users";
+import InviteUsers from "@/pages/admin/invite-users";
 import ComingSoon from "@/pages/coming-soon";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
@@ -71,6 +72,11 @@ function Router() {
       <Route path="/admin/users">
         <AdminProtectedRoute>
           <AdminUsers />
+        </AdminProtectedRoute>
+      </Route>
+      <Route path="/admin/invite-users">
+        <AdminProtectedRoute>
+          <InviteUsers />
         </AdminProtectedRoute>
       </Route>
       <Route path="/redirect" component={AdminRedirect} />

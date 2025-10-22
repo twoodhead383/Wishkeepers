@@ -494,3 +494,78 @@ export async function sendRemovalNotification(email: string, recipientName: stri
     throw error;
   }
 }
+
+export async function sendProspectInvitation(email: string, firstName: string) {
+  const registerUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/register`;
+  
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
+      <!-- Header -->
+      <div style="background-color: #2563eb; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">
+          You're Invited to Wishkeepers
+        </h1>
+      </div>
+      
+      <!-- Main content -->
+      <div style="padding: 30px; background-color: #ffffff;">
+        <h2 style="color: #1f2937; margin: 0 0 16px; font-size: 20px;">
+          Hello ${firstName},
+        </h2>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 0 0 16px; font-size: 16px;">
+          We're excited to invite you to join <strong>Wishkeepers</strong>, a secure digital vault where you can preserve your final wishes, important information, and heartfelt messages for those who matter most.
+        </p>
+        
+        <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 16px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #1e40af; margin: 0 0 12px; font-size: 16px;">What you can do with Wishkeepers:</h3>
+          <ul style="color: #374151; margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>Securely store your funeral wishes and preferences</li>
+            <li>Keep important insurance and banking details in one encrypted place</li>
+            <li>Write personal messages to loved ones</li>
+            <li>Nominate trusted contacts who can access this information when needed</li>
+            <li>Gain peace of mind knowing your wishes will be honored</li>
+          </ul>
+        </div>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 20px 0 24px; font-size: 16px;">
+          Your information is protected with military-grade encryption, ensuring that only you and your designated trusted contacts can ever access your vault.
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${registerUrl}" style="background-color: #2563eb; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600; font-size: 16px;">
+            Create Your Vault
+          </a>
+        </div>
+        
+        <p style="color: #6b7280; line-height: 1.6; margin: 20px 0 0; font-size: 14px; text-align: center;">
+          Questions? We're here to help. Simply reply to this email or contact our support team.
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">
+          Welcome to the Wishkeepers family,<br>
+          <strong style="color: #2563eb;">The Wishkeepers Team</strong>
+        </p>
+        <p style="color: #9ca3af; margin: 8px 0 0; font-size: 12px;">
+          Preserving legacies, honoring wishes
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await sendEmail(
+      email,
+      'Your Invitation to Wishkeepers - Secure Your Legacy',
+      htmlContent
+    );
+    console.log('✅ Prospect invitation sent to:', email);
+  } catch (error) {
+    console.error('❌ Failed to send prospect invitation:', error);
+    throw error;
+  }
+}
