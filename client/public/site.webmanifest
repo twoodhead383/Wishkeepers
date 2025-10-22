@@ -1,0 +1,27 @@
+{
+  "name": "Wishkeepers - Digital Legacy Vault",
+  "short_name": "Wishkeepers",
+  "description": "Securely store your funeral wishes, insurance details, banking information, and personal messages. Give trusted contacts access when it matters most.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#1e3a8a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
