@@ -1,14 +1,42 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthenticationResult, ConfidentialClientApplication } from '@azure/msal-node';
+import * as fs from 'fs';
+import * as path from 'path';
 
-// Helper function to generate email logo header
+// Load and cache logo as base64 data URI
+let logoDataUri: string | null = null;
+
+function getLogoDataUri(): string {
+  if (logoDataUri) {
+    return logoDataUri;
+  }
+  
+  try {
+    const logoPath = path.join(process.cwd(), 'attached_assets', 'wishkeepers-logo-1024x300_1755001701704.png');
+    const logoBuffer = fs.readFileSync(logoPath);
+    const base64Logo = logoBuffer.toString('base64');
+    logoDataUri = `data:image/png;base64,${base64Logo}`;
+    console.log('✅ Logo loaded and cached as base64 data URI');
+    return logoDataUri;
+  } catch (error) {
+    console.error('❌ Failed to load logo for emails:', error);
+    // Return empty string if logo can't be loaded
+    return '';
+  }
+}
+
+// Helper function to generate email logo header with embedded base64 image
 function getEmailLogoHeader(): string {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
-  const logoUrl = `${baseUrl}/email-assets/logo.png`;
+  const logoSrc = getLogoDataUri();
+  
+  if (!logoSrc) {
+    // If logo fails to load, return empty div
+    return '<div style="text-align: center; padding: 30px 0 20px 0;"></div>';
+  }
   
   return `
     <div style="text-align: center; padding: 30px 0 20px 0;">
-      <img src="${logoUrl}" alt="Wishkeepers" style="height: 40px; width: auto; display: inline-block;" />
+      <img src="${logoSrc}" alt="Wishkeepers" style="height: 40px; width: auto; display: inline-block;" />
     </div>
   `;
 }

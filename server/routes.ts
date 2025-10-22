@@ -785,24 +785,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve logo for email templates
-  app.get('/email-assets/logo.png', async (req, res) => {
-    try {
-      const path = await import('path');
-      const fs = await import('fs');
-      const logoPath = path.join(process.cwd(), 'attached_assets', 'wishkeepers-logo-1024x300_1755001701704.png');
-      
-      if (fs.existsSync(logoPath)) {
-        res.sendFile(logoPath);
-      } else {
-        res.status(404).send('Logo not found');
-      }
-    } catch (error) {
-      console.error('Error serving logo:', error);
-      res.status(500).send('Error serving logo');
-    }
-  });
-
   const httpServer = createServer(app);
   return httpServer;
 }
