@@ -89,3 +89,16 @@ The application utilizes a full-stack monorepo architecture, separating client, 
     - Open Graph tags for social media sharing
     - Twitter Card tags for Twitter sharing
   - All assets verified and tested successfully across platforms
+
+#### Autoscale Deployment Fixes
+- **Production Deployment Compatibility**: Fixed critical issues preventing Autoscale deployments
+  - Removed `reusePort: true` option from server.listen() - incompatible with Autoscale
+  - Changed to standard Node.js server.listen() syntax: `server.listen(port, "0.0.0.0", callback)`
+  - Added catch block to async IIFE for better startup error handling
+    - Logs fatal errors with full stack traces
+    - Exits with non-zero status code on initialization failure
+  - Created comprehensive `DEPLOYMENT.md` documentation
+    - Lists all required environment variables (DATABASE_URL, SESSION_SECRET, ENCRYPTION_KEY, Microsoft Graph credentials)
+    - Documents optional variables (BASE_URL, PERPLEXITY_API_KEY)
+    - Provides pre-deployment checklist
+    - Includes troubleshooting guidance
