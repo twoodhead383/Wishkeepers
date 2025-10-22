@@ -1,5 +1,8 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthenticationResult, ConfidentialClientApplication } from '@azure/msal-node';
+import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
+
+
 
 // Microsoft Graph authentication configuration
 const msalConfig = {
@@ -189,6 +192,10 @@ export async function sendWelcomeEmail(email: string, firstName: string, lastNam
     <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
       <!-- Header with branding -->
       <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        {/* Centred image section */}
+        
+         <img src="https://wishkeepers.com/assets/wishkeepers-logo-1024x300_1755001701704-D3vE2_0p.png" alt="Welcome Logo" width="512" height="150">
+        
         <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
           Welcome to Wishkeepers
         </h1>
