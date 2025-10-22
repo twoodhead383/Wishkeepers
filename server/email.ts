@@ -3,40 +3,34 @@ import { AuthenticationResult, ConfidentialClientApplication } from '@azure/msal
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Load and cache logo as base64 data URI
-let logoDataUri: string | null = null;
+// Cache logo to avoid repeated disk reads on high-volume sends
+let cachedLogoBase64: string | null = null;
 
-function getLogoDataUri(): string {
-  if (logoDataUri) {
-    return logoDataUri;
+// Load and cache the logo as base64
+function getLogoBase64(): string {
+  if (cachedLogoBase64) {
+    return cachedLogoBase64;
   }
   
   try {
     const logoPath = path.join(process.cwd(), 'attached_assets', 'wishkeepers-logo-1024x300_1755001701704.png');
     const logoBuffer = fs.readFileSync(logoPath);
-    const base64Logo = logoBuffer.toString('base64');
-    logoDataUri = `data:image/png;base64,${base64Logo}`;
-    console.log('✅ Logo loaded and cached as base64 data URI');
-    return logoDataUri;
+    cachedLogoBase64 = logoBuffer.toString('base64');
+    console.log('✅ Logo loaded and cached for email attachments');
+    return cachedLogoBase64;
   } catch (error) {
     console.error('❌ Failed to load logo for emails:', error);
-    // Return empty string if logo can't be loaded
     return '';
   }
 }
 
-// Helper function to generate email logo header with embedded base64 image
+// Helper function to generate email logo header using CID reference
+// CID (Content-ID) references work universally across all email clients,
+// including mobile Gmail, unlike base64 data URIs which are often blocked
 function getEmailLogoHeader(): string {
-  const logoSrc = getLogoDataUri();
-  
-  if (!logoSrc) {
-    // If logo fails to load, return empty div
-    return '<div style="text-align: center; padding: 30px 0 20px 0;"></div>';
-  }
-  
   return `
     <div style="text-align: center; padding: 30px 0 20px 0;">
-      <img src="${logoSrc}" alt="Wishkeepers" style="height: 40px; width: auto; display: inline-block;" />
+      <img src="cid:wishkeepers-logo" alt="Wishkeepers" style="height: 40px; width: auto; display: inline-block;" />
     </div>
   `;
 }
@@ -133,6 +127,9 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
     console.log('✅ Found sender user:', fromUser.userPrincipalName);
     console.log('   Sender User ID:', fromUser.id);
     
+    // Get cached logo for inline attachment
+    const logoBase64 = getLogoBase64();
+    
     const sendMail = {
       message: {
         subject: subject,
@@ -152,7 +149,17 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
             address: fromUser.userPrincipalName,
             name: 'Wishkeepers'
           }
-        }
+        },
+        attachments: logoBase64 ? [
+          {
+            '@odata.type': '#microsoft.graph.fileAttachment',
+            name: 'wishkeepers-logo.png',
+            contentType: 'image/png',
+            contentBytes: logoBase64,
+            contentId: 'wishkeepers-logo',
+            isInline: true
+          }
+        ] : []
       },
       saveToSentItems: true
     };
