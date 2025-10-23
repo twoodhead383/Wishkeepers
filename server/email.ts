@@ -213,7 +213,7 @@ export async function sendTrustedContactInvite(
   inviterName: string,
   inviteToken: string
 ) {
-  const inviteUrl = `${getBaseUrl()}/trusted-contact/accept/${inviteToken}`;
+  const inviteUrl = `${getBaseUrl()}/invite/${inviteToken}`;
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
