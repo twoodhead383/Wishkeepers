@@ -175,7 +175,7 @@ export default function TrustedContacts() {
                             disabled={resendInviteMutation.isPending}
                             data-testid={`button-resend-${contact.id}`}
                           >
-                            {resendInviteMutation.isPending ? "Sending..." : "Resend Invite"}
+                            {resendInviteMutation.isPending ? "Sending..." : "Resend Pending Invites"}
                           </Button>
                         )}
                         <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600">

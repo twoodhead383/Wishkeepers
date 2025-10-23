@@ -22,8 +22,11 @@ The following environment variables **must be set** in your deployment configura
 ## Optional Environment Variables
 
 - **`BASE_URL`** - Public URL of your deployment (e.g., `https://yourdomain.com`)
-  - Defaults to `http://localhost:5000` if not set
-  - Required for proper email links in production
+  - **Auto-detected on Replit**: The application automatically uses `REPLIT_DEV_DOMAIN` when deployed on Replit
+  - **Custom domains**: Set this if you're using a custom domain or deploying outside Replit
+  - **Priority order**: BASE_URL (if set) → REPLIT_DEV_DOMAIN (auto-detected) → http://localhost:5000 (development)
+  - **Important**: Do not include a trailing slash (use `https://yourdomain.com` not `https://yourdomain.com/`)
+  - Email links will use this URL, so they'll work correctly in production without manual configuration
 
 - **`PERPLEXITY_API_KEY`** - API key for Perplexity AI chat feature
   - Only needed if you want to enable the chat assistant feature
@@ -56,7 +59,7 @@ The application serves both the API and frontend on the same port, so any HTTP r
 Before deploying, ensure:
 
 1. ✅ All required secrets are set in deployment configuration
-2. ✅ `BASE_URL` is set to your production domain (for email links)
+2. ✅ `BASE_URL` is set if using a custom domain (auto-detected for Replit deployments)
 3. ✅ Database migrations are applied (`npm run db:push`)
 4. ✅ Microsoft Graph API credentials are valid and have proper permissions
 5. ✅ Email sender (hello@wishkeepers.com) is configured in Microsoft 365

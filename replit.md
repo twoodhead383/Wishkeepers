@@ -45,6 +45,23 @@ The application utilizes a full-stack monorepo architecture, separating client, 
 
 ## Recent Changes
 
+### October 23, 2025
+
+#### Automatic Base URL Detection for Email Links
+- **Production Email Fix**: Fixed broken localhost URLs in production emails
+  - Created `getBaseUrl()` helper function with smart environment detection
+  - Priority order: BASE_URL (user-set custom domain) → REPLIT_DEV_DOMAIN (auto-detected Replit domain) → http://localhost:5000 (local development)
+  - Updated all email templates to use the helper function:
+    - Trusted contact invitation emails (accept link)
+    - Welcome emails (dashboard link)
+    - Vault completion reminders (vault link)
+    - Prospect invitation emails (register link)
+  - **URL normalization**: Automatically strips trailing slashes to prevent double-slash issues
+  - **Debug logging**: Logs which URL source was selected for easy troubleshooting
+  - **No configuration required**: Email links automatically work correctly in Replit deployments
+  - **Custom domain support**: Set BASE_URL environment variable to override auto-detection (without trailing slash)
+  - Updated DEPLOYMENT.md to document the automatic URL detection and priority order
+
 ### October 22, 2025
 
 #### Database Connection Pool Error Handling

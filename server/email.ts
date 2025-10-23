@@ -3,6 +3,31 @@ import { AuthenticationResult, ConfidentialClientApplication } from '@azure/msal
 import * as fs from 'fs';
 import * as path from 'path';
 
+// Helper function to get the correct base URL for the application
+// Priority: BASE_URL (user-set) > REPLIT_DEV_DOMAIN (auto-detected) > localhost (development fallback)
+function getBaseUrl(): string {
+  let url: string;
+  let source: string;
+  
+  if (process.env.BASE_URL) {
+    url = process.env.BASE_URL;
+    source = 'BASE_URL';
+  } else if (process.env.REPLIT_DEV_DOMAIN) {
+    url = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+    source = 'REPLIT_DEV_DOMAIN';
+  } else {
+    url = 'http://localhost:5000';
+    source = 'default (localhost)';
+  }
+  
+  // Normalize URL by removing trailing slash
+  url = url.replace(/\/$/, '');
+  
+  console.log(`📍 Using base URL from ${source}: ${url}`);
+  
+  return url;
+}
+
 // Cache logo to avoid repeated disk reads on high-volume sends
 let cachedLogoBase64: string | null = null;
 
@@ -188,7 +213,7 @@ export async function sendTrustedContactInvite(
   inviterName: string,
   inviteToken: string
 ) {
-  const inviteUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/trusted-contact/accept/${inviteToken}`;
+  const inviteUrl = `${getBaseUrl()}/invite/${inviteToken}`;
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -231,7 +256,7 @@ export async function sendTrustedContactInvite(
 }
 
 export async function sendWelcomeEmail(email: string, firstName: string, lastName: string) {
-  const dashboardUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/dashboard`;
+  const dashboardUrl = `${getBaseUrl()}/dashboard`;
   
   const htmlContent = `
     <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
@@ -334,7 +359,7 @@ export async function sendVaultCompletionReminder(email: string, firstName: stri
       <p>Hello ${firstName},</p>
       <p>We noticed your Wishkeepers vault isn't quite complete yet. Taking a few minutes to finish it now can provide tremendous peace of mind for you and your loved ones.</p>
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${process.env.BASE_URL || 'http://localhost:5000'}/vault" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+        <a href="${getBaseUrl()}/vault" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
           Complete Your Vault
         </a>
       </div>
@@ -496,7 +521,7 @@ export async function sendRemovalNotification(email: string, recipientName: stri
 }
 
 export async function sendProspectInvitation(email: string, firstName: string) {
-  const registerUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/register`;
+  const registerUrl = `${getBaseUrl()}/register`;
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
