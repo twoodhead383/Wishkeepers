@@ -61,6 +61,7 @@ export interface IStorage {
     completedVaults: number;
     pendingRequests: number;
   }>;
+  deleteUser(userId: string): Promise<void>;
   
   // Third Parties
   getThirdParties(): Promise<ThirdParty[]>;
@@ -439,6 +440,31 @@ export class DatabaseStorage implements IStorage {
 
   async listInterestedParties(): Promise<InterestedParty[]> {
     return await db.select().from(interestedParties);
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    // Cascade delete with transaction to ensure atomicity
+    await db.transaction(async (tx) => {
+      // Get user's vault first
+      const [vault] = await tx.select().from(vaults).where(eq(vaults.userId, userId));
+      
+      if (vault) {
+        // Delete all trusted contacts for this vault
+        await tx.delete(trustedContacts).where(eq(trustedContacts.vaultId, vault.id));
+        
+        // Delete all data release requests for this vault
+        await tx.delete(dataReleaseRequests).where(eq(dataReleaseRequests.vaultId, vault.id));
+        
+        // Delete the vault
+        await tx.delete(vaults).where(eq(vaults.id, vault.id));
+      }
+      
+      // Delete any data release requests where this user is the requester
+      await tx.delete(dataReleaseRequests).where(eq(dataReleaseRequests.requesterId, userId));
+      
+      // Finally, delete the user
+      await tx.delete(users).where(eq(users.id, userId));
+    });
   }
 }
 

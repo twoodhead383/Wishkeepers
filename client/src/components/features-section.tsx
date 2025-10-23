@@ -6,15 +6,15 @@ export function FeaturesSection() {
       icon: Shield,
       title: "Secure Storage",
       description: "Your sensitive information is protected with bank-level encryption and stored securely.",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
     },
     {
       icon: Users,
       title: "Trusted Contacts",
       description: "Nominate trusted friends or family members who can access your vault when needed.",
-      color: "text-green-600",
-      bgColor: "bg-green-50"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
     },
     {
       icon: Gift,

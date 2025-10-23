@@ -88,8 +88,8 @@ export function HeroSection() {
                           <div className="flex items-start gap-3">
                             <FileText className="h-5 w-5 text-purple-600 mt-0.5" />
                             <div>
-                              <h4 className="font-semibold text-purple-900">Organized Information</h4>
-                              <p className="text-sm text-purple-700">All important details in one secure place - insurance, banking, passwords, and personal wishes.</p>
+                              <h4 className="font-semibold text-purple-900">Organised Information</h4>
+                              <p className="text-sm text-purple-700">All important details in one secure place - insurance information, account locations, and personal wishes.</p>
                             </div>
                           </div>
                         </div>
@@ -98,7 +98,7 @@ export function HeroSection() {
                             <Users className="h-5 w-5 text-orange-600 mt-0.5" />
                             <div>
                               <h4 className="font-semibold text-orange-900">Peace of Mind</h4>
-                              <p className="text-sm text-orange-700">Know that your loved ones will be taken care of and your wishes will be honored.</p>
+                              <p className="text-sm text-orange-700">Know that your loved ones will be taken care of and your wishes will be honoured.</p>
                             </div>
                           </div>
                         </div>
@@ -125,14 +125,14 @@ export function HeroSection() {
                               <Eye className="h-6 w-6 text-green-600" />
                             </div>
                             <h4 className="font-semibold mb-2">Zero-Knowledge Access</h4>
-                            <p className="text-sm text-gray-600">Only you and approved trusted contacts can access your information.</p>
+                            <p className="text-sm text-gray-600">Only you can access your information. And Trusted Contacts gain access upon validating a data release</p>
                           </div>
                           <div className="text-center">
                             <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
                               <UserCheck className="h-6 w-6 text-purple-600" />
                             </div>
                             <h4 className="font-semibold mb-2">Verified Release Process</h4>
-                            <p className="text-sm text-gray-600">Admin-verified process ensures your data is only released when appropriate.</p>
+                            <p className="text-sm text-gray-600">Self certified process ensures your data is only released when appropriate.</p>
                           </div>
                         </div>
                       </div>
@@ -156,15 +156,13 @@ export function HeroSection() {
                         <div className="border-l-4 border-blue-500 bg-blue-50 p-4">
                           <h4 className="font-semibold text-blue-900 mb-2">📋 Document Everything Important</h4>
                           <p className="text-sm text-blue-800">
-                            Include account numbers, passwords, contact information for professionals (lawyer, accountant, financial advisor), 
-                            and location of important documents. Your family will thank you for this level of detail.
+                            Include account numbers and locations, contact information for professionals (solicitor, accountant, financial advisor etc.), and locations of important documents. Your family will thank you for this level of detail.
                           </p>
                         </div>
                         <div className="border-l-4 border-purple-500 bg-purple-50 p-4">
                           <h4 className="font-semibold text-purple-900 mb-2">💝 Personal Messages Matter</h4>
                           <p className="text-sm text-purple-800">
-                            Use the personal messages section to share what you couldn't say in person - gratitude, pride, 
-                            love, and guidance for the future. These become treasured keepsakes for your loved ones.
+                            Use the personal messages section to share what you couldn't say in person - gratitude, pride, love, and guidance for the future. These become treasured keepsakes for your loved ones.
                           </p>
                         </div>
                       </div>

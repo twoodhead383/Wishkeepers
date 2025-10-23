@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Users, Building2, LogOut } from "lucide-react";
+import { BarChart3, Users, Building2, LogOut, UserPlus } from "lucide-react";
 import logoImage from "@assets/wishkeepers-logo-1024x300_1755001701704.png";
 
 interface AdminLayoutProps {
@@ -27,6 +27,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       href: '/admin/users',
       icon: Users,
       current: location === '/admin/users'
+    },
+    {
+      name: 'Invite Users',
+      href: '/admin/invite-users',
+      icon: UserPlus,
+      current: location === '/admin/invite-users'
     },
     {
       name: 'Third Parties',

@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { hashPassword, comparePassword, requireAuth, requireAdmin } from "./auth";
 import { sendTrustedContactInvite } from "./email";
 import { handleChatWithAI } from "./chat";
+import { z } from "zod";
 import { 
   insertUserSchema, 
   loginSchema, 
@@ -759,6 +760,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ contacts });
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch trusted contacts', error });
+    }
+  });
+
+  // Admin route - delete user (cascade deletes vault, trusted contacts, release requests)
+  app.delete('/api/admin/users/:userId', requireAdmin, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      // Prevent deleting yourself
+      if (userId === req.session.userId) {
+        return res.status(400).json({ message: 'Cannot delete your own account' });
+      }
+      
+      await storage.deleteUser(userId);
+      res.json({ message: 'User and all associated data deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ message: 'Failed to delete user', error });
+    }
+  });
+
+  // Admin route - invite prospect users
+  app.post('/api/admin/invite-prospects', requireAdmin, async (req, res) => {
+    try {
+      const prospectSchema = z.object({
+        email: z.string().email('Invalid email format').max(320, 'Email too long'),
+        firstName: z.string().min(1, 'First name is required').max(100, 'First name too long')
+      });
+      
+      const prospectsArraySchema = z.array(prospectSchema).min(1, 'At least one prospect is required').max(100, 'Cannot send more than 100 invitations at once');
+      
+      // Validate the request body
+      const validation = prospectsArraySchema.safeParse(req.body.prospects);
+      
+      if (!validation.success) {
+        return res.status(400).json({ 
+          message: 'Invalid prospect data',
+          errors: validation.error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+        });
+      }
+      
+      const prospects = validation.data;
+      
+      // Deduplicate by email (case-insensitive)
+      const seen = new Set<string>();
+      const uniqueProspects = prospects.filter(p => {
+        const emailLower = p.email.toLowerCase();
+        if (seen.has(emailLower)) return false;
+        seen.add(emailLower);
+        return true;
+      });
+      
+      const results = {
+        sent: 0,
+        failed: 0,
+        skipped: prospects.length - uniqueProspects.length,
+        errors: [] as string[]
+      };
+      
+      const { sendProspectInvitation } = await import('./email');
+      
+      for (const prospect of uniqueProspects) {
+        try {
+          await sendProspectInvitation(prospect.email, prospect.firstName);
+          results.sent++;
+        } catch (error) {
+          results.failed++;
+          results.errors.push(`Failed to send to ${prospect.email}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          console.error(`Failed to send invitation to ${prospect.email}:`, error);
+        }
+      }
+      
+      res.json({
+        message: `Sent ${results.sent} invitation(s)${results.skipped > 0 ? `, skipped ${results.skipped} duplicate(s)` : ''}${results.failed > 0 ? `, ${results.failed} failed` : ''}`,
+        results
+      });
+    } catch (error) {
+      console.error('Error sending prospect invitations:', error);
+      res.status(500).json({ message: 'Failed to process invitations', error });
     }
   });
 

@@ -1,5 +1,39 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthenticationResult, ConfidentialClientApplication } from '@azure/msal-node';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Cache logo to avoid repeated disk reads on high-volume sends
+let cachedLogoBase64: string | null = null;
+
+// Load and cache the logo as base64
+function getLogoBase64(): string {
+  if (cachedLogoBase64) {
+    return cachedLogoBase64;
+  }
+  
+  try {
+    const logoPath = path.join(process.cwd(), 'attached_assets', 'wishkeepers-logo-1024x300_1755001701704.png');
+    const logoBuffer = fs.readFileSync(logoPath);
+    cachedLogoBase64 = logoBuffer.toString('base64');
+    console.log('✅ Logo loaded and cached for email attachments');
+    return cachedLogoBase64;
+  } catch (error) {
+    console.error('❌ Failed to load logo for emails:', error);
+    return '';
+  }
+}
+
+// Helper function to generate email logo header using CID reference
+// CID (Content-ID) references work universally across all email clients,
+// including mobile Gmail, unlike base64 data URIs which are often blocked
+function getEmailLogoHeader(): string {
+  return `
+    <div style="text-align: center; padding: 30px 0 20px 0;">
+      <img src="cid:wishkeepers-logo" alt="Wishkeepers" style="height: 40px; width: auto; display: inline-block;" />
+    </div>
+  `;
+}
 
 // Microsoft Graph authentication configuration
 const msalConfig = {
@@ -93,6 +127,9 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
     console.log('✅ Found sender user:', fromUser.userPrincipalName);
     console.log('   Sender User ID:', fromUser.id);
     
+    // Get cached logo for inline attachment
+    const logoBase64 = getLogoBase64();
+    
     const sendMail = {
       message: {
         subject: subject,
@@ -112,7 +149,17 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
             address: fromUser.userPrincipalName,
             name: 'Wishkeepers'
           }
-        }
+        },
+        attachments: logoBase64 ? [
+          {
+            '@odata.type': '#microsoft.graph.fileAttachment',
+            name: 'wishkeepers-logo.png',
+            contentType: 'image/png',
+            contentBytes: logoBase64,
+            contentId: 'wishkeepers-logo',
+            isInline: true
+          }
+        ] : []
       },
       saveToSentItems: true
     };
@@ -145,6 +192,7 @@ export async function sendTrustedContactInvite(
   
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      ${getEmailLogoHeader()}
       <h2 style="color: #2563eb;">You've been nominated as a trusted contact</h2>
       <p>Hello ${name},</p>
       <p>${inviterName} has nominated you as a trusted contact on Wishkeepers, a secure digital legacy vault.</p>
@@ -187,6 +235,7 @@ export async function sendWelcomeEmail(email: string, firstName: string, lastNam
   
   const htmlContent = `
     <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
       <!-- Header with branding -->
       <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
@@ -280,6 +329,7 @@ export async function sendWelcomeEmail(email: string, firstName: string, lastNam
 export async function sendVaultCompletionReminder(email: string, firstName: string) {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      ${getEmailLogoHeader()}
       <h2 style="color: #2563eb;">Your vault is waiting for you</h2>
       <p>Hello ${firstName},</p>
       <p>We noticed your Wishkeepers vault isn't quite complete yet. Taking a few minutes to finish it now can provide tremendous peace of mind for you and your loved ones.</p>
@@ -307,6 +357,7 @@ export async function sendVaultCompletionReminder(email: string, firstName: stri
 export async function sendVerificationCode(email: string, firstName: string, verificationCode: string) {
   const htmlContent = `
     <div style="font-family: 'Arial', 'Helvetica', sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
       <!-- Header with branding -->
       <div style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
@@ -392,6 +443,7 @@ export async function sendVerificationCode(email: string, firstName: string, ver
 export async function sendRemovalNotification(email: string, recipientName: string, otherPersonName: string) {
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
       <!-- Header -->
       <div style="background-color: #f59e0b; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">
@@ -439,6 +491,81 @@ export async function sendRemovalNotification(email: string, recipientName: stri
     console.log('✅ Removal notification sent to:', email);
   } catch (error) {
     console.error('❌ Failed to send removal notification:', error);
+    throw error;
+  }
+}
+
+export async function sendProspectInvitation(email: string, firstName: string) {
+  const registerUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/register`;
+  
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; color: #333333;">
+      ${getEmailLogoHeader()}
+      <!-- Header -->
+      <div style="background-color: #2563eb; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">
+          You're Invited to Wishkeepers
+        </h1>
+      </div>
+      
+      <!-- Main content -->
+      <div style="padding: 30px; background-color: #ffffff;">
+        <h2 style="color: #1f2937; margin: 0 0 16px; font-size: 20px;">
+          Hello ${firstName},
+        </h2>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 0 0 16px; font-size: 16px;">
+          We're excited to invite you to join <strong>Wishkeepers</strong>, a secure digital vault where you can preserve your final wishes, important information, and heartfelt messages for those who matter most.
+        </p>
+        
+        <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 16px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #1e40af; margin: 0 0 12px; font-size: 16px;">What you can do with Wishkeepers:</h3>
+          <ul style="color: #374151; margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li>Securely store your funeral wishes and preferences</li>
+            <li>Keep important insurance and banking details in one encrypted place</li>
+            <li>Write personal messages to loved ones</li>
+            <li>Nominate trusted contacts who can access this information when needed</li>
+            <li>Gain peace of mind knowing your wishes will be honored</li>
+          </ul>
+        </div>
+        
+        <p style="color: #4b5563; line-height: 1.6; margin: 20px 0 24px; font-size: 16px;">
+          Your information is protected with bank-grade encryption, ensuring that only you and your designated trusted contacts can ever access your vault.
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${registerUrl}" style="background-color: #2563eb; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600; font-size: 16px;">
+            Create Your Vault
+          </a>
+        </div>
+        
+        <p style="color: #6b7280; line-height: 1.6; margin: 20px 0 0; font-size: 14px; text-align: center;">
+          Questions? We're here to help. Simply reply to this email or contact our support team.
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div style="background-color: #f9fafb; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+        <p style="color: #6b7280; margin: 0; font-size: 14px;">
+          Welcome to the Wishkeepers family,<br>
+          <strong style="color: #2563eb;">The Wishkeepers Team</strong>
+        </p>
+        <p style="color: #9ca3af; margin: 8px 0 0; font-size: 12px;">
+          Preserving legacies, honoring wishes
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await sendEmail(
+      email,
+      'Your Invitation to Wishkeepers - Secure Your Legacy',
+      htmlContent
+    );
+    console.log('✅ Prospect invitation sent to:', email);
+  } catch (error) {
+    console.error('❌ Failed to send prospect invitation:', error);
     throw error;
   }
 }

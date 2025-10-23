@@ -1,10 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Shield, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Users, Shield, CheckCircle, Clock, AlertCircle, Trash2, Search } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function AdminUsers() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const { data: users = [] } = useQuery({
     queryKey: ["/api/admin/users"],
     queryFn: async () => {
@@ -61,6 +81,30 @@ export default function AdminUsers() {
     },
   });
 
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      return await apiRequest("DELETE", `/api/admin/users/${userId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/vaults"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/release-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/trusted-contacts"] });
+      setDeleteUserId(null);
+      toast({
+        title: "User deleted",
+        description: "User and all associated data have been removed successfully.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Combine user and vault data for display (without sensitive content)
   const userVaultData = users.map((user: any) => {
     const userVault = vaults.find((vault: any) => vault.userId === user.id);
@@ -86,11 +130,32 @@ export default function AdminUsers() {
     };
   });
 
+  // Filter users based on search query
+  const filteredUserVaultData = userVaultData.filter((user: any) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      user.firstName?.toLowerCase().includes(query) ||
+      user.lastName?.toLowerCase().includes(query) ||
+      user.email?.toLowerCase().includes(query)
+    );
+  });
+
   const totalUsers = users.length;
   const usersWithVaults = userVaultData.filter((u: any) => u.vaultExists).length;
   const completedVaults = userVaultData.filter((u: any) => u.vaultComplete).length;
   const pendingRequests = Array.isArray(releaseRequests) ? releaseRequests.filter((req: any) => req.status === 'pending').length : 0;
   const usersWithTrustedContacts = userVaultData.filter((u: any) => u.trustedContactsCount > 0).length;
+
+  const handleDeleteUser = (userId: string) => {
+    setDeleteUserId(userId);
+  };
+
+  const confirmDelete = () => {
+    if (deleteUserId) {
+      deleteUserMutation.mutate(deleteUserId);
+    }
+  };
 
   return (
     <AdminLayout>
@@ -167,10 +232,23 @@ export default function AdminUsers() {
           {/* Users Table */}
           <Card>
             <CardHeader>
-              <CardTitle>User Accounts & Vault Status</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>User Accounts & Vault Status</CardTitle>
+                <div className="relative w-72">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Search users by name or email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                    data-testid="input-search-users"
+                  />
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              {userVaultData.length === 0 ? (
+              {filteredUserVaultData.length === 0 ? (
                 <div className="text-center py-8">
                   <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500">No users found</p>
@@ -188,10 +266,11 @@ export default function AdminUsers() {
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Trusted Contacts</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Release Requests</th>
                         <th className="text-left py-3 px-4 font-medium text-gray-600">Last Updated</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {userVaultData.map((user: any) => (
+                      {filteredUserVaultData.map((user: any) => (
                         <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-4 px-4">
                             <div className="font-medium text-gray-900">
@@ -274,6 +353,17 @@ export default function AdminUsers() {
                               <span className="text-gray-400">-</span>
                             )}
                           </td>
+                          <td className="py-4 px-4">
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.id)}
+                              disabled={deleteUserMutation.isPending}
+                              data-testid={`button-delete-user-${user.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -284,6 +374,34 @@ export default function AdminUsers() {
           </Card>
         </div>
       </div>
+
+      <AlertDialog open={deleteUserId !== null} onOpenChange={() => setDeleteUserId(null)}>
+        <AlertDialogContent data-testid="dialog-confirm-delete">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this user? This action will permanently remove:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>The user account</li>
+                <li>Their vault and all encrypted data</li>
+                <li>All trusted contacts</li>
+                <li>All data release requests</li>
+              </ul>
+              <p className="mt-4 font-semibold text-red-600">This action cannot be undone.</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+              data-testid="button-confirm-delete"
+            >
+              Delete User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }

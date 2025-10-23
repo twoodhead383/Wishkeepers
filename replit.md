@@ -1,218 +1,122 @@
 # Wishkeepers - Digital Legacy Vault Web Application
 
 ## Overview
-
-Wishkeepers is a secure, encrypted web application designed as a digital "green box" for storing sensitive legacy-related data. The application helps individuals prepare for life's most important moments by securely storing funeral wishes, insurance information, banking details, and personal messages. Users can nominate trusted contacts who can request access to this information when needed.
+Wishkeepers is a secure, encrypted web application serving as a digital "green box" for sensitive legacy data. It enables individuals to securely store funeral wishes, insurance, banking details, and personal messages, with the ability to nominate trusted contacts for access in crucial moments. The project aims to provide peace of mind and simplify end-of-life planning.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
 ### Overall Architecture Pattern
-The application follows a full-stack monorepo architecture with a clear separation between client, server, and shared components. It uses a modern React frontend with an Express.js backend, connected through a RESTful API design.
+The application utilizes a full-stack monorepo architecture, separating client, server, and shared components. It features a React frontend, an Express.js backend, and a RESTful API.
 
 ### Technology Stack
-- **Frontend**: React with TypeScript, using Vite as the build tool
-- **UI Library**: Radix UI components with Tailwind CSS for styling (shadcn/ui design system)
-- **Backend**: Node.js with Express.js
-- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Database Provider**: Neon Database (serverless PostgreSQL)
-- **Authentication**: Session-based authentication with bcrypt password hashing
-- **Email**: Nodemailer for email notifications and invitations
-- **Encryption**: AES-256-GCM for field-level encryption of sensitive data
+- **Frontend**: React with TypeScript, Vite, Radix UI, Tailwind CSS (shadcn/ui), Wouter, React Hook Form with Zod, React Query.
+- **Backend**: Node.js with Express.js, bcrypt, Nodemailer, Drizzle ORM.
+- **Database**: PostgreSQL (Neon Database) with Drizzle ORM.
+- **Authentication**: Session-based authentication, bcrypt for password hashing.
+- **Email**: Nodemailer for notifications and invitations.
+- **Encryption**: AES-256-GCM for field-level encryption.
 
-## Key Components
+### Key Components
+- **Frontend**: Feature-based component organization, React Query for server state, Wouter for routing, React Hook Form for forms.
+- **Backend**: RESTful API design, Express session for state, authentication/authorization middleware, Repository pattern.
+- **Database Schema**: Users, Vaults (encrypted storage), Trusted Contacts (invitation system), Data Release Requests (admin-approved access).
 
-### Frontend Architecture
-- **Component Structure**: Uses a feature-based organization with reusable UI components
-- **State Management**: React Query (TanStack Query) for server state management
-- **Routing**: Wouter for lightweight client-side routing
-- **Form Handling**: React Hook Form with Zod validation
-- **Styling**: Tailwind CSS with CSS custom properties for theming
+### Data Flow Highlights
+- **User Management**: Email-verified registration, bcrypt password hashing, session-based authentication. Admin users bypass email verification.
+- **Vault Management**: Encrypted storage of sensitive data (AES-256-GCM), completion tracking, owner-only access unless released.
+- **Trusted Contact System**: Email invitations, secure token acceptance, role-based dashboards, self-service removal.
+- **Data Release Process**: Trusted contacts submit declaration of death forms, admin validation, encrypted data decryption upon approval.
 
-### Backend Architecture
-- **API Design**: RESTful endpoints with consistent error handling
-- **Session Management**: Express session with secure cookie configuration
-- **Middleware**: Authentication and authorization middleware for protected routes
-- **Storage Pattern**: Repository pattern with PostgreSQL database using Drizzle ORM
-
-### Database Schema
-- **Users**: Core user accounts with admin role support
-- **Vaults**: Encrypted storage for legacy information with completion tracking
-- **Trusted Contacts**: Invitation system for designated contacts
-- **Data Release Requests**: Admin-approved access control system
-
-## Data Flow
-
-### User Registration and Authentication
-1. Users register with email/password credentials
-2. Email verification is required before account access
-   - 6-digit verification code sent via email
-   - Codes expire after 15 minutes
-   - Users can request new codes if needed
-3. Passwords are hashed using bcrypt before storage
-4. Session-based authentication maintains user state
-5. Admin users have elevated permissions and bypass email verification
-
-### Vault Management
-1. Users create and update their digital vault information
-2. All sensitive fields are encrypted using AES-256-GCM before database storage
-3. Completion percentage is calculated based on filled sections
-4. Vault data is only accessible to the owner unless released
-
-### Trusted Contact System
-1. Vault owners nominate trusted contacts via email invitation
-2. Email invitations contain secure tokens for acceptance
-3. Trusted contacts can create accounts or act solely as wishkeepers
-4. Access is granted only through the data release request process
-
-### Data Release Process
-1. Trusted contacts submit declaration of death forms
-2. Admin manually validates requests for security
-3. Upon approval, encrypted data is decrypted and made accessible
-4. Email notifications confirm the release process
+### Deployment Strategy
+- **Build Process**: Vite for frontend, ESBuild for backend, Drizzle Kit for database migrations.
+- **Environment Configuration**: Relies on environment variables for database, email, security keys (SESSION_SECRET, ENCRYPTION_KEY), and base URL.
+- **Security**: Secure cookie configuration, rate limiting, input validation, secure error handling.
+- **Scalability**: Stateless server design.
 
 ## External Dependencies
-
-### Core Runtime Dependencies
-- **Database**: Drizzle ORM with PostgreSQL dialect for type-safe database operations
-- **Authentication**: bcrypt for password hashing, express-session for session management
-- **Email**: Nodemailer for transactional emails and invitations
-- **Validation**: Zod for runtime type validation and schema definitions
-- **UI Components**: Extensive Radix UI component library for accessible components
-
-### Development Dependencies
-- **Build Tools**: Vite for fast development and optimized production builds
-- **TypeScript**: Full TypeScript support across frontend and backend
-- **Code Quality**: ESBuild for server bundling, PostCSS for CSS processing
-
-## Deployment Strategy
-
-### Build Process
-- **Frontend**: Vite builds the React application to static assets
-- **Backend**: ESBuild bundles the Node.js server with external package handling
-- **Database**: Drizzle Kit handles schema migrations and database updates
-
-### Environment Configuration
-- **Database**: Requires DATABASE_URL environment variable for PostgreSQL connection
-- **Email**: SMTP configuration for email delivery (defaults to Ethereal for development)
-- **Security**: SESSION_SECRET and ENCRYPTION_KEY for secure operations
-- **Base URL**: Configurable base URL for email link generation
-
-### Production Considerations
-- **Security**: Secure cookie configuration in production environments
-- **Performance**: Static asset serving with proper caching headers
-- **Monitoring**: Comprehensive request logging and error tracking
-- **Scalability**: Stateless server design ready for horizontal scaling
-
-### Development vs Production
-- **Development**: Hot module replacement, debug logging, development SMTP
-- **Production**: Optimized builds, secure configurations, production database connections
+- **Database**: Drizzle ORM for PostgreSQL.
+- **Authentication**: bcrypt, express-session.
+- **Email**: Nodemailer.
+- **Validation**: Zod.
+- **UI Components**: Radix UI.
 
 ## Recent Changes
 
-### January 28, 2025
-- **Database Integration**: Successfully migrated from in-memory storage to PostgreSQL database
-  - Added Neon serverless PostgreSQL with Drizzle ORM integration
-  - Created persistent database schema for all entities (users, vaults, trusted contacts, data release requests)
-  - Maintained field-level encryption for sensitive vault data
-  - Preserved test user accounts: leo@thel30project.com (Test25) and admin@wishkeepers.com (admin123)
-  - Application now provides persistent data storage across server restarts
+### October 22, 2025
 
-### January 29, 2025
-- **Admin Interface Redesign**: Complete separation of admin and user experiences
-  - Created dedicated admin-only interface with left navigation sidebar
-  - Admin users bypass general dashboard and go directly to admin interface upon login
-  - Removed general user features (dashboard, vault, trusted contacts) from admin view
-  - Added third parties management system for tracking partner organizations with referral links
-  - Created Users & Vaults overview page showing administrative metadata without exposing sensitive vault content
-  - Fixed admin sign out functionality and API routing issues
-  - Updated navigation to show only relevant sections based on user role
-- **Admin Analytics Dashboard**: Added comprehensive analytics and charts
-  - Interactive line chart tracking user registrations over time (12 months)
-  - Bar chart showing data release requests over time
-  - Pie chart displaying vault completion time distribution
-  - System insights with average completion times and approval rates
-  - Real-time stats cards for quick overview
-- **Enhanced Home Page**: Improved "Learn More" modal with comprehensive information
-  - Key benefits section explaining time savings, stress reduction, and peace of mind
-  - Data protection details covering bank-level encryption and zero-knowledge access
-  - Smart estate planning tips including using wishes for gifting outside the will
-  - Thoughtful recommendations for asset exposure reduction and probate optimization
-- **Navigation Content Modals**: Added comprehensive information modals for top navigation
-  - "How it Works" modal with step-by-step process, feature details, and access procedures
-  - "Security" modal explaining AES-256 encryption, zero-knowledge access, and privacy rights
-  - "Support" modal with contact options, FAQ section, and emergency support information
-  - All modals feature professional design with icons, color-coded sections, and clear information hierarchy
-- **Funeral Plan Summary Generation**: Auto-populate traditional text area with wizard results
-  - Generate human-readable summaries from structured wizard data
-  - Allow editing of generated summaries for personalization
-  - Clear visual indicators when content is auto-generated vs manually written
-- **Dashboard Navigation Enhancement**: Fixed section-specific navigation
-  - Dashboard tiles now navigate directly to correct vault sections
-  - URL parameters pass section information for proper routing
-  - Improved user experience with targeted section access
+#### Database Connection Pool Error Handling
+- **Critical Fix**: Added comprehensive error handling to prevent server crashes from database connection termination
+  - Configured Neon connection pool with proper timeouts (30s idle, 10s connection timeout, max 10 connections)
+  - Added error event handlers to catch and log unexpected database pool errors
+  - Implemented graceful shutdown process that properly closes database connections on SIGTERM/SIGINT
+  - Added connection lifecycle logging (connect/remove events) for monitoring
+  - Prevents unhandled rejection crashes when Neon terminates idle connections
 
-### January 30, 2025
-- **Comprehensive Security Audit and Hardening**: Major security improvements implemented
-  - **Fixed Critical Encryption Vulnerability**: Replaced deprecated `createCipher` with secure `createCipheriv`
-  - **Enhanced Password Security**: Strengthened password requirements (8+ chars, mixed case, numbers) and increased bcrypt rounds to 12
-  - **Added Security Headers**: Implemented Helmet.js with Content Security Policy, XSS protection, and other security headers
-  - **Rate Limiting Protection**: Added comprehensive rate limiting (100 req/15min general, 5 auth attempts/15min)
-  - **Session Security**: Enhanced session configuration with httpOnly cookies, sameSite protection, and secure naming
-  - **Input Validation**: Strengthened Zod schemas with proper length limits and format validation
-  - **Error Handling**: Implemented secure error handling that doesn't leak sensitive information in production
-  - **Environment Security**: Added mandatory checks for ENCRYPTION_KEY and SESSION_SECRET environment variables
-  - **Database Security**: Added proper error handling and logging for all database operations
-  - **Type Safety**: Fixed TypeScript issues and improved type safety across the application
+#### Email Logo Fix for Mobile Gmail
+- **Mobile Compatibility**: Fixed broken logo images in mobile Gmail app
+  - Switched from base64 data URI embedding to CID (Content-ID) inline attachments
+  - Mobile Gmail blocks data URIs for security, but CID references work universally
+  - Logo now attached as inline Microsoft Graph attachment with `contentId: 'wishkeepers-logo'`
+  - Implemented caching to avoid repeated disk reads on high-volume sends
+  - All 5 email templates now use `cid:wishkeepers-logo` reference:
+    - Trusted contact invitation emails
+    - Welcome emails for new users
+    - Vault completion reminder emails
+    - Email verification code emails
+    - Trusted contact removal notification emails
+  - Logo displays consistently at 40px height across all email clients (desktop and mobile)
+  - Graceful degradation if logo file cannot be loaded
 
-### October 20, 2025
-- **Coming Soon Holding Page**: Created standalone holding page for pre-launch email capture
-  - Added `interested_parties` database table to store pre-launch signups with email, name, and consent tracking
-  - Created public API endpoint POST /api/interested-parties with duplicate email detection (409 status)
-  - Built professional Coming Soon page at `/coming-soon` route with:
-    - Wishkeepers branding and Shield logo
-    - Email capture form with name, email, and consent checkbox
-    - Clear messaging about digital legacy vault purpose and features
-    - Privacy disclaimer about future contact when app launches
-    - Success state confirmation after submission
-    - Full dark mode support and responsive design
-  - Page is standalone (no navbar/layout) for use as primary .com domain landing page
-  - Test users can continue using full app via replit domain while public sees holding page
-  - Includes comprehensive data-testid attributes for testing and accessibility
-  - Successfully tested end-to-end: form validation, submission, database persistence, and success state
+#### Comprehensive Favicon Implementation
+- **Cross-Platform Compatibility**: Implemented fully compliant, device-agnostic favicon system
+  - Created `client/public/` directory structure for static assets served by Vite
+  - Added wishkeepers favicon (`favicon.png`) in public folder
+  - Comprehensive meta tag coverage in `index.html`:
+    - Standard favicons for desktop browsers (16x16, 32x32)
+    - Apple Touch Icons for iOS devices (76x76, 120x120, 152x152, 180x180)
+    - Android/Chrome icons for Android devices (192x192, 512x512)
+    - Microsoft tile configuration with brand color (#1e3a8a)
+    - Theme color meta tag for mobile browsers
+  - Created `site.webmanifest` for Progressive Web App (PWA) support
+    - Enables "Add to Home Screen" on mobile devices
+    - Defines app name, colors, and icon references
+    - Configured for standalone display mode
+  - Enhanced SEO with comprehensive meta tags:
+    - Page title and description
+    - Open Graph tags for social media sharing
+    - Twitter Card tags for Twitter sharing
+  - All assets verified and tested successfully across platforms
 
-### October 17, 2025
-- **Email Verification System**: Implemented mandatory email verification for new user registrations
-  - Added database fields for email verification status and codes (emailVerified, verificationCode, verificationCodeExpiry)
-  - New users receive a 6-digit verification code via email upon registration
-  - Verification codes expire after 15 minutes for security
-  - Created dedicated email verification page with code input and resend functionality
-  - Users must verify email before accessing the application (admin users bypass this requirement)
-  - Improved error handling to preserve JSON error data for better UX feedback
-  - Updated registration and login flows to redirect to verification when needed
-  - Enhanced email templates with professional verification code display
-  - Security patch: Fixed GCM authentication tag validation vulnerability in encryption module
-- **Trusted Contact Invitation and Dashboard System**: Complete implementation of trusted contact user experience
-  - **Invitation Acceptance Flow**: Created /invite/:token page for accepting nominations
-    - Users set password and create account without email verification (invite link validates email ownership)
-    - Backend automatically sets email_verified to true for invited users
-    - Updates trusted contact status to 'confirmed' and establishes user session
-  - **Dual-Mode Dashboard**: Adaptive dashboard based on user's role
-    - "You're a Trusted Contact" section shows people user is nominated for
-    - Quick action buttons: "No Longer Wish to Be Trusted Contact" and "Notify of Passing"
-    - "Create Your Own Vault" section appears for trusted contacts without their own vault
-    - Conditional rendering adapts to whether user owns vault, is trusted contact, or both
-  - **Remove as Trusted Contact**: Self-service removal functionality
-    - Updates contact status to 'denied' in database
-    - Sends automated email notifications to both vault owner and trusted contact
-    - Immediately removes card from dashboard after confirmation
-  - **Death Declaration Workflow**: Formal process for requesting vault access
-    - Modal displays declaration with deceased person's name
-    - Creates data release request with 'pending' status for admin review
-    - Success message explains admin review process
-  - **Schema Fix**: Corrected insertDataReleaseRequestSchema to omit requesterId (backend injects from session)
-  - **Storage Enhancement**: Added getTrustedContactsByEmail method for dashboard queries
-  - **End-to-End Testing**: Playwright tests confirm complete flow from invitation through death declaration
+#### Autoscale Deployment Fixes
+- **Production Deployment Compatibility**: Fixed critical issues preventing Autoscale deployments
+  - Removed `reusePort: true` option from server.listen() - incompatible with Autoscale
+  - Changed to standard Node.js server.listen() syntax: `server.listen(port, "0.0.0.0", callback)`
+  - Added catch block to async IIFE for better startup error handling
+    - Logs fatal errors with full stack traces
+    - Exits with non-zero status code on initialization failure
+  - Created comprehensive `DEPLOYMENT.md` documentation
+    - Lists all required environment variables (DATABASE_URL, SESSION_SECRET, ENCRYPTION_KEY, Microsoft Graph credentials)
+    - Documents optional variables (BASE_URL, PERPLEXITY_API_KEY)
+    - Provides pre-deployment checklist
+    - Includes troubleshooting guidance
+
+#### Admin User Management Features
+- **User Deletion with Cascade**: Implemented safe user deletion for data retention compliance
+  - Admin users page with search functionality (filters by name or email)
+  - Delete button for each user (disabled for self-deletion protection)
+  - Atomic transaction-based cascade deletion: trusted_contacts → data_release_requests → vaults → user
+  - Confirmation dialog before deletion to prevent accidental data loss
+  - DELETE `/api/admin/users/:id` endpoint with `requireAdmin` protection
+  
+- **Prospect Invitation System**: Marketing tool for sending branded invitations to potential users
+  - Two invitation modes: single entry form and CSV bulk upload
+  - Email template matching existing brand design with logo via CID attachment
+  - Zod validation enforcing max 100 invitations per batch, email format validation, name requirements
+  - Automatic case-insensitive email deduplication to prevent duplicate sends
+  - Row-level error tracking for bulk uploads with detailed failure reporting
+  - POST `/api/admin/invite-prospects` endpoint processes invitations via Microsoft Graph
+  - CSV format: `email,firstName` (one prospect per line)
+  - Success/failure reporting with sent count, skipped duplicates, and error details

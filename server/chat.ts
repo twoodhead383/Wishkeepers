@@ -13,7 +13,16 @@ interface ChatRequest {
 const FAQ_RESPONSES = {
   // Security-related questions
   security: {
-    keywords: ['secure', 'security', 'safe', 'encryption', 'protect', 'hack', 'data breach', 'privacy'],
+    keywords: [
+      "secure",
+      "security",
+      "safe",
+      "encryption",
+      "protect",
+      "hack",
+      "data breach",
+      "privacy",
+    ],
     response: `Your data security is our top priority. Here's how we protect your information:
 
 🔒 **Bank-Level Encryption**: We use AES-256 encryption, the same standard used by financial institutions
@@ -21,12 +30,20 @@ const FAQ_RESPONSES = {
 ✅ **Admin Verification**: All data release requests are manually reviewed by our security team
 🔐 **Secure Storage**: Your data is encrypted both in transit and at rest
 
-Your sensitive information is never stored in plain text, and we never sell or share your data with third parties.`
+Your sensitive information is never stored in plain text, and we never sell or share your data with third parties.`,
   },
 
   // Account and password issues
   account: {
-    keywords: ['password', 'forgot password', 'login', 'account', 'sign in', 'access', 'username'],
+    keywords: [
+      "password",
+      "forgot password",
+      "login",
+      "account",
+      "sign in",
+      "access",
+      "username",
+    ],
     response: `For account-related issues:
 
 🔑 **Forgot Password**: Use the "Forgot Password" link on the login page to reset your password securely
@@ -34,12 +51,22 @@ Your sensitive information is never stored in plain text, and we never sell or s
 🔄 **Password Reset**: Check your email (including spam folder) for the reset link
 📧 **Email Issues**: If you're not receiving emails, contact support@wishkeepers.com
 
-If you're still having trouble, our support team can help verify your account: support@wishkeepers.com`
+If you're still having trouble, our support team can help verify your account: support@wishkeepers.com`,
   },
 
   // Vault and features
   vault: {
-    keywords: ['vault', 'store', 'information', 'funeral wishes', 'insurance', 'banking', 'add', 'update', 'complete'],
+    keywords: [
+      "vault",
+      "store",
+      "information",
+      "funeral wishes",
+      "insurance",
+      "banking",
+      "add",
+      "update",
+      "complete",
+    ],
     response: `Your Wishkeepers vault can store:
 
 💝 **Funeral Wishes & Personal Messages**: Service preferences, personal items to gift, heartfelt messages
@@ -49,26 +76,41 @@ If you're still having trouble, our support team can help verify your account: s
 
 💡 **Pro Tip**: Use the "Funeral Wishes" section to specify personal items for specific people - this keeps gifts outside your formal will and can reduce probate complexity!
 
-You can update your vault anytime by logging into your account.`
+You can update your vault anytime by logging into your account.`,
   },
 
   // Trusted contacts
   contacts: {
-    keywords: ['trusted contacts', 'family', 'friends', 'access', 'invite', 'nominate', 'wishkeeper'],
+    keywords: [
+      "trusted contacts",
+      "family",
+      "friends",
+      "access",
+      "invite",
+      "nominate",
+      "wishkeeper",
+    ],
     response: `Trusted contacts are family members or friends who can request access to your vault when needed.
 
 👥 **How to Add**: Go to "Trusted Contacts" in your dashboard and send email invitations
 📨 **Email Invitations**: Your contacts receive secure invitation links to accept their role
 🔒 **Access Process**: They must submit a data release request with proper documentation
 ✅ **Admin Approval**: Our team verifies each request before granting access
-📞 **Emergency**: For urgent situations, call our emergency line: 1-800-WISHKEEP ext. 911
+📞 **Emergency**: For urgent situations, call our emergency line: +44 1623 827900 ext. 911
 
-Trusted contacts don't need to create full accounts - they can act solely as wishkeepers when needed.`
+Trusted contacts don't need to create full accounts - they can act solely as wishkeepers when needed.`,
   },
 
   // Data release process
   release: {
-    keywords: ['data release', 'death', 'access vault', 'family access', 'release request', 'emergency'],
+    keywords: [
+      "data release",
+      "death",
+      "access vault",
+      "family access",
+      "release request",
+      "emergency",
+    ],
     response: `Here's how your family accesses your vault when needed:
 
 1️⃣ **Request Submission**: Trusted contact submits a data release request with required documentation
@@ -77,39 +119,48 @@ Trusted contacts don't need to create full accounts - they can act solely as wis
 
 📋 **Required Documentation**: Death certificate or other official documentation
 ⏱️ **Processing Time**: Typically 2-3 business days for verification
-🚨 **Emergency Support**: 24/7 emergency line available: 1-800-WISHKEEP ext. 911
+🚨 **Emergency Support**: 24/7 emergency line available: +44 1623 827900 ext. 911
 
-This process ensures your data is only released appropriately while providing your family the access they need.`
+This process ensures your data is only released appropriately while providing your family the access they need.`,
   },
 
   // Pricing and plans
   pricing: {
-    keywords: ['cost', 'price', 'pricing', 'free', 'premium', 'plan', 'subscription', 'payment'],
+    keywords: [
+      "cost",
+      "price",
+      "pricing",
+      "free",
+      "premium",
+      "plan",
+      "subscription",
+      "payment",
+    ],
     response: `Wishkeepers offers flexible pricing options:
 
 🆓 **Free Plan**: Complete basic vault functionality - free forever
-⭐ **Premium Features**: Advanced features available for enhanced needs
-💳 **No Hidden Fees**: Transparent pricing with no surprise charges
-🔄 **Cancel Anytime**: Full control over your subscription
+⭐ **Premium Features**: Advanced features coming soon for enhanced needs
+💳 **No Hidden Fees**: Transparent free service with no surprise charges
+🔄 **Cancel Anytime**: Full control over your subscription and vault
 
-The basic vault includes all essential features: secure storage, trusted contacts, and the data release process. Contact our team for specific pricing details: support@wishkeepers.com`
+The basic vault includes all essential features: secure storage, trusted contacts, and the data release process. Contact our team for specific pricing queries: support@wishkeepers.com`,
   },
 
   // General support
   support: {
-    keywords: ['help', 'support', 'contact', 'phone', 'email', 'assistance'],
+    keywords: ["help", "support", "contact", "phone", "email", "assistance"],
     response: `We're here to help! Contact options:
 
 📧 **Email Support**: support@wishkeepers.com - Detailed help with account questions
-📞 **Phone Support**: 1-800-WISHKEEP (Mon-Fri 9AM-6PM EST)  
+📞 **Phone Support**: +44 1623 827900 (Mon-Fri 9AM-6PM EST)  
 💬 **Live Chat**: Right here! I can answer most questions immediately
-🚨 **Emergency**: 24/7 emergency support: 1-800-WISHKEEP ext. 911
+🚨 **Emergency**: 24/7 emergency support: +44 1623 827900
 
 Average response times:
 - Live chat: Immediate
 - Email: Within 2-4 hours  
-- Phone: Available during business hours`
-  }
+- Phone: Available during business hours`,
+  },
 };
 
 function findBestResponse(message: string): string {
@@ -138,8 +189,8 @@ function findBestResponse(message: string): string {
 
 Just ask me about any of these topics! For complex issues, you can also reach our human support team:
 - Email: support@wishkeepers.com
-- Phone: 1-800-WISHKEEP
-- Emergency: 1-800-WISHKEEP ext. 911`;
+- Phone: +44 1623 827900
+- Emergency: +44 1623 827900`;
 }
 
 export async function handleChatMessage(req: ChatRequest): Promise<string> {

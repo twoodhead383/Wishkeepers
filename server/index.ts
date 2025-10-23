@@ -102,11 +102,37 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
-})();
+
+  const gracefulShutdown = async (signal: string) => {
+    log(`${signal} received, shutting down gracefully...`);
+    
+    server.close(async () => {
+      log('HTTP server closed');
+      
+      try {
+        const { pool } = await import('./db');
+        await pool.end();
+        log('Database pool closed');
+      } catch (error) {
+        console.error('Error closing database pool:', error);
+      }
+      
+      process.exit(0);
+    });
+
+    setTimeout(() => {
+      console.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+})().catch((error) => {
+  console.error('Fatal error during server initialization:', error);
+  console.error('Stack trace:', error.stack);
+  process.exit(1);
+});

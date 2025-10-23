@@ -19,6 +19,10 @@ import {
   Heart,
   Shield
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ChatWidget } from "@/components/chat-widget";
+import { Mail, Phone } from "lucide-react";
+
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -277,9 +281,91 @@ export default function Dashboard() {
                   <p className="mb-2">Your data is protected with bank-level encryption.</p>
                   <p>Need help? Contact our support team anytime.</p>
                 </div>
-                <Button variant="outline" className="w-full">
-                  Contact Support
-                </Button>
+                {/*dash support modal*/}
+                 <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      Contact Support
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-bold text-center mb-4">
+                        We're Here to Help
+                      </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-8">
+                      {/* Contact Options */}
+                      <div className="grid md:grid-cols-3 gap-6">
+                        <div className="text-center p-6 bg-blue-50 rounded-xl">
+                          <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Mail className="h-8 w-8 text-blue-600" />
+                          </div>
+                          <h3 className="font-semibold mb-2">Email Support</h3>
+                          <p className="text-sm text-gray-600 mb-3">Get detailed help with your account and questions.</p>
+                          <p className="text-blue-600 font-medium">support@wishkeepers.com</p>
+                        </div>
+
+                        <div className="text-center p-6 bg-green-50 rounded-xl">
+                          <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Phone className="h-8 w-8 text-green-600" />
+                          </div>
+                          <h3 className="font-semibold mb-2">Phone Support</h3>
+                          <p className="text-sm text-gray-600 mb-3">Speak directly with our support team.</p>
+                          <p className="text-green-600 font-medium">+44 1623 827900</p>
+                          <p className="text-xs text-gray-500">Mon-Fri 9AM-6PM EST</p>
+                        </div>
+
+                        <div className="text-center p-6 bg-purple-50 rounded-xl">
+                          <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <MessageCircle className="h-8 w-8 text-purple-600" />
+                          </div>
+                          <h3 className="font-semibold mb-2">Live Chat</h3>
+                          <p className="text-sm text-gray-600 mb-3">Quick answers to common questions.</p>
+                          <ChatWidget />
+                        </div>
+                      </div>
+
+                      {/* FAQ Section */}
+                      <div>
+                        <h3 className="text-xl font-semibold mb-6 text-center">Frequently Asked Questions</h3>
+                        <div className="space-y-4">
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-2">How secure is my information?</h4>
+                            <p className="text-sm text-gray-600">Your data is protected with bank-level AES-256 encryption and stored securely. Only you and your designated trusted contacts can access it through our verified release process.</p>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-2">What happens if I forget my password?</h4>
+                            <p className="text-sm text-gray-600">You can reset your password using the "Forgot Password" link on the login page. We'll send a secure reset link to your registered email address.</p>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-2">How do trusted contacts access my vault?</h4>
+                            <p className="text-sm text-gray-600">Trusted contacts must submit a certified data release request. Upon submitting the certified request, your data is shared with those you have nominated as trusted contacts.</p>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-2">Can I update my information anytime?</h4>
+                            <p className="text-sm text-gray-600">Yes! You can log in anytime to update your vault information, add new details, or modify your trusted contacts list.</p>
+                          </div>
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-2">Is there a cost to use Wishkeepers?</h4>
+                            <p className="text-sm text-gray-600">The vault is free.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Emergency Support */}
+                      <div className="bg-red-50 border-l-4 border-red-500 p-6">
+                        <h3 className="text-lg font-semibold text-red-900 mb-2">Emergency Situations</h3>
+                        <p className="text-red-800 mb-3">
+                          If you need immediate assistance with accessing a vault due to a family emergency, please call our support line.
+                        </p>
+                        <p className="text-red-900 font-semibold">Emergency: +44 1623827900</p>
+                        <p className="text-sm text-red-700">Available 24/7</p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           </div>
