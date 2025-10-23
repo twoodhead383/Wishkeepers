@@ -25,6 +25,7 @@ The following environment variables **must be set** in your deployment configura
   - **Auto-detected on Replit**: The application automatically uses `REPLIT_DEV_DOMAIN` when deployed on Replit
   - **Custom domains**: Set this if you're using a custom domain or deploying outside Replit
   - **Priority order**: BASE_URL (if set) → REPLIT_DEV_DOMAIN (auto-detected) → http://localhost:5000 (development)
+  - **Important**: Do not include a trailing slash (use `https://yourdomain.com` not `https://yourdomain.com/`)
   - Email links will use this URL, so they'll work correctly in production without manual configuration
 
 - **`PERPLEXITY_API_KEY`** - API key for Perplexity AI chat feature

@@ -6,15 +6,26 @@ import * as path from 'path';
 // Helper function to get the correct base URL for the application
 // Priority: BASE_URL (user-set) > REPLIT_DEV_DOMAIN (auto-detected) > localhost (development fallback)
 function getBaseUrl(): string {
+  let url: string;
+  let source: string;
+  
   if (process.env.BASE_URL) {
-    return process.env.BASE_URL;
+    url = process.env.BASE_URL;
+    source = 'BASE_URL';
+  } else if (process.env.REPLIT_DEV_DOMAIN) {
+    url = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+    source = 'REPLIT_DEV_DOMAIN';
+  } else {
+    url = 'http://localhost:5000';
+    source = 'default (localhost)';
   }
   
-  if (process.env.REPLIT_DEV_DOMAIN) {
-    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
-  }
+  // Normalize URL by removing trailing slash
+  url = url.replace(/\/$/, '');
   
-  return 'http://localhost:5000';
+  console.log(`📍 Using base URL from ${source}: ${url}`);
+  
+  return url;
 }
 
 // Cache logo to avoid repeated disk reads on high-volume sends

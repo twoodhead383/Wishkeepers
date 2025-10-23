@@ -56,8 +56,10 @@ The application utilizes a full-stack monorepo architecture, separating client, 
     - Welcome emails (dashboard link)
     - Vault completion reminders (vault link)
     - Prospect invitation emails (register link)
+  - **URL normalization**: Automatically strips trailing slashes to prevent double-slash issues
+  - **Debug logging**: Logs which URL source was selected for easy troubleshooting
   - **No configuration required**: Email links automatically work correctly in Replit deployments
-  - **Custom domain support**: Set BASE_URL environment variable to override auto-detection
+  - **Custom domain support**: Set BASE_URL environment variable to override auto-detection (without trailing slash)
   - Updated DEPLOYMENT.md to document the automatic URL detection and priority order
 
 ### October 22, 2025
